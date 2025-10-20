@@ -2,33 +2,37 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
-    font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #0b0b2d, #1a1a4a);
-    color: #fff;
+    color: white;
     min-height: 100vh;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 header {
     text-align: center;
     margin-bottom: 30px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
 }
 
 h1 {
     font-size: 2.5rem;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -56,10 +60,9 @@ h1 {
 
 .setup-form {
     background: rgba(255, 255, 255, 0.1);
-    padding: 30px;
+    padding: 25px;
     border-radius: 15px;
-    max-width: 500px;
-    margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 .input-group {
@@ -89,9 +92,7 @@ input:focus {
     transform: scale(1.02);
 }
 
-.btn-primary {
-    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-    color: white;
+.btn {
     border: none;
     padding: 15px 30px;
     font-size: 1.1rem;
@@ -103,6 +104,11 @@ input:focus {
     letter-spacing: 1px;
     display: block;
     margin: 20px auto 0;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    color: white;
     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
 }
 
@@ -113,6 +119,17 @@ input:focus {
 
 .btn-primary:active {
     transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .game-header {
@@ -159,13 +176,6 @@ input:focus {
     font-weight: bold;
     color: #333;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    animation: diceRoll 1s ease-out;
-}
-
-@keyframes diceRoll {
-    0% { transform: rotate(0deg) scale(0.5); }
-    50% { transform: rotate(180deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
 }
 
 .board-container {
@@ -196,7 +206,6 @@ input:focus {
     position: relative;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
 }
 
 .planet:hover {
@@ -298,29 +307,11 @@ input:focus {
     flex-wrap: wrap;
 }
 
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    padding: 12px 25px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: bold;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-}
-
 .victory-content {
     text-align: center;
     background: rgba(255, 255, 255, 0.1);
     padding: 50px;
     border-radius: 20px;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 .victory-content h2 {
@@ -350,7 +341,6 @@ input:focus {
     font-size: 1.1rem;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .game-header {
         flex-direction: column;
@@ -367,7 +357,7 @@ input:focus {
         flex-direction: column;
     }
     
-    .btn-primary, .btn-secondary {
+    .btn {
         width: 100%;
     }
 }

@@ -106,10 +106,12 @@ class SpaceProfessionGame {
         const rollInterval = setInterval(() => {
             const randomValue = Math.floor(Math.random() * 6) + 1;
             diceElement.textContent = randomValue;
-            diceElement.style.animation = 'diceRoll 0.3s ease-out';
+            diceElement.style.animation = 'none';
+            void diceElement.offsetWidth; // Перезапуск анимации
+            diceElement.style.animation = 'pulse 0.3s ease-out';
             
             rolls++;
-            if (rolls >= 10) {
+            if (rolls >= 8) {
                 clearInterval(rollInterval);
                 const finalValue = Math.floor(Math.random() * 6) + 1;
                 diceElement.textContent = finalValue;
@@ -120,11 +122,7 @@ class SpaceProfessionGame {
                     rollButton.disabled = false;
                 }, 500);
             }
-            
-            setTimeout(() => {
-                diceElement.style.animation = '';
-            }, 300);
-        }, 100);
+        }, 150);
     }
     
     movePlayer(steps) {
@@ -178,7 +176,7 @@ class SpaceProfessionGame {
                             <h3 class="task-title">🎯 Почти у цели!</h3>
                             <p class="task-description">Вы достигли Планеты Профессий, но вам нужно собрать еще ${10 - this.player.stars} звезд, чтобы выиграть!</p>
                             <div class="task-actions">
-                                <button class="btn-secondary" onclick="game.continueFromFinish()">Продолжить сбор звезд</button>
+                                <button class="btn btn-secondary" onclick="game.continueFromFinish()">Продолжить сбор звезд</button>
                             </div>
                         </div>
                     `;
@@ -220,9 +218,9 @@ class SpaceProfessionGame {
                 <p class="task-description"><strong>Задание:</strong> Придумай, как твоя профессия может помочь! Опиши или нарисуй решение.</p>
                 <div class="task-timer" id="task-timer">⏱️ Осталось времени: 2:00</div>
                 <div class="task-actions">
-                    <button class="btn-primary complete-task" data-stars="1">Простое решение (+1⭐)</button>
-                    <button class="btn-primary complete-task" data-stars="2">Оригинальное решение (+2⭐)</button>
-                    <button class="btn-secondary fail-task">Не могу решить</button>
+                    <button class="btn btn-primary complete-task" data-stars="1">Простое решение (+1⭐)</button>
+                    <button class="btn btn-primary complete-task" data-stars="2">Оригинальное решение (+2⭐)</button>
+                    <button class="btn btn-secondary fail-task">Не могу решить</button>
                 </div>
             </div>
         `;
@@ -235,15 +233,15 @@ class SpaceProfessionGame {
                 <p class="task-description"><strong>Ваша профессия:</strong> ${this.player.profession}</p>
                 <p class="task-description"><strong>Задание:</strong> Убеди других игроков, что твоя профессия полезна для космонавтов!</p>
                 <p class="task-description">Приготовь 3 убедительных доказательства:</p>
-                <ol style="text-align: left; margin: 15px 0;">
+                <ol style="text-align: left; margin: 15px 0; padding-left: 20px;">
                     <li>Как твоя профессия помогает в космосе?</li>
                     <li>Какие проблемы она решает?</li>
                     <li>Почему без нее не обойтись?</li>
                 </ol>
                 <div class="task-actions">
-                    <button class="btn-primary complete-task" data-stars="3">Убедил всех! (+3⭐)</button>
-                    <button class="btn-primary complete-task" data-stars="2">Убедил частично (+2⭐)</button>
-                    <button class="btn-secondary fail-task">Нужно больше аргументов</button>
+                    <button class="btn btn-primary complete-task" data-stars="3">Убедил всех! (+3⭐)</button>
+                    <button class="btn btn-primary complete-task" data-stars="2">Убедил частично (+2⭐)</button>
+                    <button class="btn btn-secondary fail-task">Нужно больше аргументов</button>
                 </div>
             </div>
         `;
@@ -256,14 +254,14 @@ class SpaceProfessionGame {
                 <p class="task-description"><strong>Ваша профессия:</strong> ${this.player.profession}</p>
                 <p class="task-description"><strong>Задание:</strong> Помоги другому игроку с его заданием!</p>
                 <p class="task-description">Вы можете:</p>
-                <ul style="text-align: left; margin: 15px 0;">
+                <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
                     <li>Подсказать идею для его задания</li>
                     <li>Помочь нарисовать или оформить решение</li>
                     <li>Поддержать советом или ободрением</li>
                 </ul>
                 <div class="task-actions">
-                    <button class="btn-primary complete-task" data-stars="1">Помог успешно! (+1⭐)</button>
-                    <button class="btn-secondary fail-task">Не смог помочь</button>
+                    <button class="btn btn-primary complete-task" data-stars="1">Помог успешно! (+1⭐)</button>
+                    <button class="btn btn-secondary fail-task">Не смог помочь</button>
                 </div>
             </div>
         `;
@@ -277,7 +275,7 @@ class SpaceProfessionGame {
                 <p class="task-description"><strong>Событие:</strong> ${event.title}</p>
                 <p class="task-description">${event.description}</p>
                 <div class="task-actions">
-                    <button class="btn-primary complete-task" data-stars="1">Принять событие</button>
+                    <button class="btn btn-primary complete-task" data-stars="1">Принять событие</button>
                 </div>
             </div>
         `;
@@ -382,7 +380,6 @@ class SpaceProfessionGame {
 
 // Инициализация игры при загрузке страницы
 let game;
-
 document.addEventListener('DOMContentLoaded', () => {
     game = new SpaceProfessionGame();
 });

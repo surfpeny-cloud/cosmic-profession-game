@@ -4,12 +4,56 @@
     box-sizing: border-box;
 }
 
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+    --warning-gradient: linear-gradient(135deg, #ffd93d 0%, #ff9a3d 100%);
+    --cosmic-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    --star-glow: 0 0 20px rgba(255, 255, 255, 0.8);
+    --neon-glow: 0 0 15px rgba(102, 126, 234, 0.7);
+}
+
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: 'Exo 2', sans-serif;
+    background: var(--cosmic-gradient);
     color: white;
     overflow: hidden;
     height: 100vh;
+    position: relative;
+}
+
+/* Анимированный фон с звездами */
+.stars-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+}
+
+.star:nth-child(1) { top: 10%; left: 20%; width: 2px; height: 2px; animation-delay: 0s; }
+.star:nth-child(2) { top: 30%; left: 80%; width: 3px; height: 3px; animation-delay: 0.5s; }
+.star:nth-child(3) { top: 60%; left: 40%; width: 2px; height: 2px; animation-delay: 1s; }
+.star:nth-child(4) { top: 80%; left: 60%; width: 3px; height: 3px; animation-delay: 1.5s; }
+.star:nth-child(5) { top: 20%; left: 50%; width: 2px; height: 2px; animation-delay: 2s; }
+.star:nth-child(6) { top: 70%; left: 30%; width: 3px; height: 3px; animation-delay: 2.5s; }
+.star:nth-child(7) { top: 40%; left: 70%; width: 2px; height: 2px; animation-delay: 3s; }
+.star:nth-child(8) { top: 90%; left: 10%; width: 3px; height: 3px; animation-delay: 3.5s; }
+.star:nth-child(9) { top: 50%; left: 90%; width: 2px; height: 2px; animation-delay: 4s; }
+.star:nth-child(10) { top: 15%; left: 15%; width: 3px; height: 3px; animation-delay: 4.5s; }
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); box-shadow: var(--star-glow); }
 }
 
 .screen {
@@ -20,84 +64,148 @@ body {
     width: 100%;
     height: 100%;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .screen.active {
     display: block;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .screen-content {
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 20px;
 }
 
-/* Анимация загрузки */
+/* Экран загрузки */
 .loading-container {
     text-align: center;
+    padding: 40px 20px;
+}
+
+.cosmic-loader {
+    margin: 0 auto 40px;
+    position: relative;
+    width: 120px;
+    height: 120px;
 }
 
 .planet-loader {
     position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 30px;
-}
-
-.orbit {
-    position: absolute;
     width: 100%;
     height: 100%;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    animation: rotate 4s linear infinite;
 }
 
-.rocket {
+.ring {
     position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    animation: bounce 2s ease-in-out infinite;
+    border: 2px solid transparent;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
 }
 
-.central-planet {
+.ring:nth-child(1) {
+    width: 100%;
+    height: 100%;
+    animation-delay: 0s;
+}
+
+.ring:nth-child(2) {
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0.2s;
+    border-top-color: #764ba2;
+}
+
+.ring:nth-child(3) {
+    width: 60%;
+    height: 60%;
+    top: 20%;
+    left: 20%;
+    animation-delay: 0.4s;
+    border-top-color: #56ab2f;
+}
+
+.central-core {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 40px;
+    animation: pulse 2s infinite;
+}
+
+.loading-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #fff, #667eea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.progress-container {
+    max-width: 300px;
+    margin: 0 auto;
 }
 
 .progress-bar {
-    width: 200px;
+    width: 100%;
     height: 8px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 4px;
-    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
     overflow: hidden;
+    margin-bottom: 10px;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ff6b6b, #ffd93d);
-    border-radius: 4px;
-    animation: loading 3s ease-in-out;
+    background: var(--primary-gradient);
+    border-radius: 10px;
     width: 0%;
+    animation: loading 3s ease-in-out forwards;
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes rotate {
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.progress-text {
+    text-align: center;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+@keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-@keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0px); }
-    50% { transform: translateX(-50%) translateY(-10px); }
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
 }
 
 @keyframes loading {
@@ -105,165 +213,393 @@ body {
     100% { width: 100%; }
 }
 
-/* Форма персонажа */
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Экран создания персонажа */
+.header-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.title-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.header-section h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2em;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #fff, #ffd93d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: #ccc;
+    font-size: 1.1em;
+}
+
 .character-form {
-    background: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 25px;
+    position: relative;
 }
 
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+.floating-input {
+    position: relative;
 }
 
-.input-group input,
-.input-group select {
+.floating-input input {
     width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.9);
+    padding: 15px 45px 15px 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
     font-size: 16px;
+    transition: all 0.3s ease;
 }
 
-.profession-result {
-    margin: 20px 0;
-    padding: 15px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    text-align: center;
-    display: none;
+.floating-input input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: var(--neon-glow);
+    background: rgba(255, 255, 255, 0.15);
 }
 
-.profession-name {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffd93d;
-    margin: 10px 0;
-}
-
-.profession-desc {
-    font-style: italic;
+.floating-input label {
+    position: absolute;
+    left: 15px;
+    top: 15px;
     color: #ccc;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    color: #667eea;
+    background: var(--cosmic-gradient);
+    padding: 0 8px;
+}
+
+.input-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.modern-select {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: var(--neon-glow);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.modern-select option {
+    background: #1a1a2e;
+    color: white;
 }
 
 /* Кнопки */
-.btn-primary, .btn-success, .btn-dice, .btn-creative {
-    width: 100%;
-    padding: 15px;
+.btn {
+    padding: 15px 25px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cosmic-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.cosmic-btn:hover::before {
+    left: 100%;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: var(--primary-gradient);
     color: white;
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+    background: var(--success-gradient);
     color: white;
-}
-
-.btn-dice {
-    background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-    color: white;
-    font-size: 20px;
 }
 
 .btn-creative {
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    background: var(--warning-gradient);
+    color: #333;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
     color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.btn-primary:disabled, .btn-success:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.btn-icon {
+    font-size: 1.2em;
 }
 
-/* Игровое поле */
+/* Результат профессии */
+.profession-result {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    display: none;
+    animation: slideUp 0.5s ease-out;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.result-icon {
+    font-size: 1.5em;
+}
+
+.profession-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #ffd93d;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.profession-desc {
+    color: #ccc;
+    text-align: center;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.profession-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+}
+
+.stat-icon {
+    font-size: 1.1em;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Игровой экран */
 .game-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
     padding: 15px;
-    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
-.player-info, .profession-info {
-    font-size: 14px;
+.player-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.player-avatar {
+    font-size: 2em;
+    animation: float 3s ease-in-out infinite;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-name {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.player-profession {
+    font-size: 0.9em;
+    color: #ffd93d;
+}
+
+.stars-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .stars-count {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #ffd93d;
+}
+
+.progress-ring circle {
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+/* Игровая карта */
+.game-map-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.map-title {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1em;
+    margin-bottom: 20px;
     color: #ffd93d;
 }
 
 .game-map {
     position: relative;
-    height: 200px;
-    margin: 30px 0;
-    background: rgba(0,0,0,0.3);
+    height: 120px;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     overflow: hidden;
 }
 
-.map-container {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 20px;
+.map-path {
+    position: absolute;
+    top: 50%;
+    left: 50px;
+    right: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #667eea, #764ba2, transparent);
+    transform: translateY(-50%);
+}
+
+.planets-container {
     position: relative;
-}
-
-.start-point, .end-point {
-    font-size: 14px;
-    font-weight: bold;
-    color: #ffd93d;
-    white-space: nowrap;
-}
-
-.planets-track {
-    flex: 1;
+    height: 100%;
     display: flex;
     justify-content: space-between;
-    margin: 0 20px;
-    position: relative;
+    align-items: center;
+    padding: 0 40px;
 }
 
 .planet {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 1.3em;
     position: relative;
-    cursor: pointer;
-    transition: all 0.3s ease;
     z-index: 2;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    animation: float 4s ease-in-out infinite;
 }
 
-.planet.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
-.planet.red { background: linear-gradient(135deg, #ff6b6b, #ff8e53); }
-.planet.green { background: linear-gradient(135deg, #56ab2f, #a8e6cf); }
-.planet.yellow { background: linear-gradient(135deg, #ffd93d, #ff9a3d); }
+.planet.blue { background: var(--primary-gradient); }
+.planet.red { background: var(--danger-gradient); }
+.planet.green { background: var(--success-gradient); }
+.planet.yellow { background: var(--warning-gradient); }
 
 .planet::before {
     content: '';
@@ -274,63 +610,55 @@ body {
     bottom: -2px;
     border-radius: 50%;
     background: inherit;
-    filter: blur(5px);
-    opacity: 0.7;
+    filter: blur(8px);
+    opacity: 0.6;
     z-index: -1;
+}
+
+.planet.current {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px currentColor;
+    animation: pulse 2s infinite;
+}
+
+.planet.visited::after {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #56ab2f;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .player-marker {
     position: absolute;
-    font-size: 24px;
-    transition: all 0.5s ease-in-out;
     z-index: 3;
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Кубик */
-.dice-result {
-    text-align: center;
-    font-size: 48px;
-    margin: 10px 0;
-    animation: diceRoll 0.5s ease-out;
+.rocket {
+    font-size: 1.8em;
+    filter: drop-shadow(0 0 10px rgba(255, 217, 61, 0.8));
+    animation: float 2s ease-in-out infinite;
 }
 
-@keyframes diceRoll {
-    0% { transform: scale(0) rotate(0deg); }
-    50% { transform: scale(1.2) rotate(180deg); }
-    100% { transform: scale(1) rotate(360deg); }
-}
-
-/* Журнал игры */
-.game-log {
-    background: rgba(0,0,0,0.5);
-    border-radius: 10px;
-    padding: 15px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-.log-messages {
-    font-size: 12px;
-}
-
-.log-message {
-    margin: 5px 0;
-    padding: 5px;
-    border-left: 3px solid #667eea;
-    background: rgba(255,255,255,0.05);
-}
-
-/* Экран задания */
-.planet-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.planet-icon {
-    font-size: 60px;
-    margin-bottom: 10px;
-    animation: float 3s ease-in-out infinite;
+.marker-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(255, 217, 61, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
 }
 
 @keyframes float {
@@ -338,137 +666,565 @@ body {
     50% { transform: translateY(-10px); }
 }
 
-.mission-content {
-    background: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 15px;
+/* Элементы управления */
+.game-controls {
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.mission-type {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    padding: 5px 10px;
-    border-radius: 20px;
-    display: inline-block;
+.btn-dice {
+    background: var(--warning-gradient);
+    color: #333;
+    border: none;
+    border-radius: 15px;
+    padding: 15px 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 15px;
 }
 
-.mission-type.blue { background: #667eea; }
-.mission-type.red { background: #ff6b6b; }
-.mission-type.green { background: #56ab2f; }
-.mission-type.yellow { background: #ffd93d; color: #333; }
+.btn-dice:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(255, 217, 61, 0.4);
+}
+
+.btn-dice:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.dice-icon {
+    font-size: 1.5em;
+}
+
+.dice-result {
+    font-size: 3em;
+    animation: diceRoll 0.8s ease-out;
+}
+
+@keyframes diceRoll {
+    0% { transform: scale(0) rotate(0deg); }
+    50% { transform: scale(1.3) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+/* Журнал игры */
+.game-log {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.log-header h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1em;
+}
+
+.btn-clear {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-clear:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.log-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.log-message {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+    font-size: 0.9em;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Экран задания */
+.planet-header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.planet-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 3s infinite;
+}
+
+.planet-icon {
+    font-size: 4em;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    animation: float 3s ease-in-out infinite;
+}
+
+.planet-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+.planet-type {
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+.mission-content {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.mission-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.mission-type-badge.blue { background: var(--primary-gradient); }
+.mission-type-badge.red { background: var(--danger-gradient); }
+.mission-type-badge.green { background: var(--success-gradient); }
+.mission-type-badge.yellow { background: var(--warning-gradient); color: #333; }
+
+.mission-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
 
 .mission-text {
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 1.1em;
+    line-height: 1.6;
     margin-bottom: 15px;
 }
 
 .profession-hint {
-    font-style: italic;
-    color: #ffd93d;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 217, 61, 0.1);
+    border: 1px solid rgba(255, 217, 61, 0.3);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.hint-icon {
+    font-size: 1.2em;
+}
+
+.hint-text {
+    font-size: 0.9em;
+}
+
+.mission-timer {
+    text-align: center;
+}
+
+.timer-container {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.timer-icon {
+    font-size: 1.5em;
+}
+
+.timer-display {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #ff6b6b;
+}
+
+.timer-progress {
+    width: 200px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.timer-fill {
+    height: 100%;
+    background: var(--danger-gradient);
+    border-radius: 3px;
+    width: 100%;
+    transition: width 1s linear;
+}
+
+.mission-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.mission-btn {
+    flex: 1;
+}
+
+/* Поле решения */
+.solution-input {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    display: none;
+}
+
+.solution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
 }
 
-.timer {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    color: #ff6b6b;
-    animation: pulse 1s infinite;
+.solution-type {
+    padding: 5px 10px;
+    background: var(--warning-gradient);
+    color: #333;
+    border-radius: 10px;
+    font-size: 0.8em;
+    font-weight: 600;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.solution-input textarea {
+#solutionText {
     width: 100%;
-    height: 100px;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.9);
+    height: 120px;
+    padding: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
     font-size: 14px;
     resize: none;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+#solutionText:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: var(--neon-glow);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.solution-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.solution-actions .btn {
+    flex: 1;
 }
 
 /* Экран победы */
-.victory-content {
+.victory-container {
     text-align: center;
+    padding: 40px 20px;
 }
 
 .victory-animation {
     position: relative;
     height: 200px;
+    margin-bottom: 40px;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--primary-gradient);
+    animation: confettiFall 3s ease-in infinite;
+}
+
+.confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: var(--primary-gradient); }
+.confetti:nth-child(2) { left: 30%; animation-delay: 0.5s; background: var(--success-gradient); }
+.confetti:nth-child(3) { left: 50%; animation-delay: 1s; background: var(--danger-gradient); }
+.confetti:nth-child(4) { left: 70%; animation-delay: 1.5s; background: var(--warning-gradient); }
+.confetti:nth-child(5) { left: 90%; animation-delay: 2s; background: var(--primary-gradient); }
+
+.victory-planet {
+    font-size: 6em;
+    animation: celebrate 2s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.victory-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255, 217, 61, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.victory-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5em;
+    background: linear-gradient(45deg, #ffd93d, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.victory-subtitle {
+    font-size: 1.3em;
+    color: #ccc;
     margin-bottom: 30px;
 }
 
-.victory-planet {
-    font-size: 80px;
-    animation: celebrate 2s ease-in-out infinite;
+.victory-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
 }
 
-.fireworks {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.victory-stat {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
 }
 
-.firework {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: #ffd93d;
-    border-radius: 50%;
-    animation: firework 1.5s ease-out infinite;
+.victory-stat:last-child {
+    margin-bottom: 0;
 }
 
-.firework:nth-child(1) { left: 20%; animation-delay: 0s; }
-.firework:nth-child(2) { left: 50%; animation-delay: 0.5s; }
-.firework:nth-child(3) { left: 80%; animation-delay: 1s; }
+.stat-icon {
+    font-size: 1.5em;
+}
 
-@keyframes firework {
-    0% { transform: translateY(100px) scale(0); opacity: 1; }
-    50% { opacity: 1; }
-    100% { transform: translateY(-100px) scale(2); opacity: 0; }
+.stat-info {
+    text-align: left;
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.victory-message {
+    background: rgba(255, 217, 61, 0.1);
+    border: 1px solid rgba(255, 217, 61, 0.3);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.victory-message p {
+    color: #ffd93d;
+    font-style: italic;
+}
+
+.victory-btn {
+    font-size: 1.1em;
+    padding: 18px 30px;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(500px) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 @keyframes celebrate {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.1) rotate(5deg); }
-    75% { transform: scale(1.1) rotate(-5deg); }
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    25% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    75% {
+        transform: scale(1.1) rotate(-5deg);
+    }
 }
 
-.victory-stats {
-    background: rgba(255,255,255,0.1);
-    padding: 20px;
-    border-radius: 15px;
-    margin: 20px 0;
+/* Уведомления */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: white;
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    max-width: 300px;
 }
 
-.victory-stats p {
-    margin: 10px 0;
-    font-size: 18px;
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    border-left: 4px solid #56ab2f;
+}
+
+.notification.error {
+    border-left: 4px solid #ff6b6b;
+}
+
+.notification.info {
+    border-left: 4px solid #667eea;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-icon {
+    font-size: 1.2em;
+}
+
+.hidden {
+    display: none;
 }
 
 /* Адаптивность */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .screen {
-        padding: 10px;
+        padding: 15px;
+    }
+    
+    .screen-content {
+        max-width: 100%;
     }
     
     .game-header {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .mission-actions {
+        flex-direction: column;
+    }
+    
+    .solution-actions {
+        flex-direction: column;
+    }
+    
+    .profession-stats {
+        flex-direction: column;
+        gap: 8px;
     }
     
     .planet {
-        width: 30px;
-        height: 30px;
-        font-size: 16px;
+        width: 35px;
+        height: 35px;
+        font-size: 1.1em;
     }
+    
+    .header-section h1 {
+        font-size: 1.6em;
+    }
+    
+    .victory-title {
+        font-size: 2em;
+    }
+}
+
+/* Полоса прокрутки */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--danger-gradient);
 }

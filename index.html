@@ -1,3 +1,4 @@
+<!-- СОЗДАЙТЕ НОВЫЙ ФАЙЛ index.html И СКОПИРУЙТЕ ВЕСЬ ЭТОТ КОД -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -19,6 +20,25 @@
                 <h1>Запускаем космический корабль...</h1>
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран выбора режима -->
+        <div id="modeScreen" class="screen">
+            <div class="screen-content">
+                <h1>ВЫБЕРИ РЕЖИМ ИГРЫ</h1>
+                <div class="mode-selection">
+                    <button id="singlePlayerBtn" class="mode-btn">
+                        <div class="mode-icon">👤</div>
+                        <div class="mode-title">Одиночная игра</div>
+                        <div class="mode-desc">Играй один против компьютера</div>
+                    </button>
+                    <button id="multiplayerBtn" class="mode-btn">
+                        <div class="mode-icon">👥</div>
+                        <div class="mode-title">Мультиплеер</div>
+                        <div class="mode-desc">До 4 игроков на одном устройстве</div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -56,15 +76,37 @@
             </div>
         </div>
 
+        <!-- Экран создания игроков -->
+        <div id="playersScreen" class="screen">
+            <div class="screen-content">
+                <h1>СОЗДАНИЕ ИГРОКОВ</h1>
+                <div class="players-list" id="playersListContainer">
+                    <!-- Игроки будут добавляться динамически -->
+                </div>
+                <div class="players-controls">
+                    <button id="addPlayerBtn" class="btn-secondary">+ Добавить игрока</button>
+                    <button id="startMultiplayerBtn" class="btn-primary" disabled>Начать игру</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Игровое поле -->
         <div id="gameScreen" class="screen">
             <div class="game-header">
-                <div class="player-info">
-                    <span id="currentPlayerName"></span>
+                <div class="current-player-info">
+                    <span>Сейчас ходит:</span>
+                    <div class="current-player" id="currentPlayerName"></div>
                     <div class="profession-badge" id="currentProfession"></div>
                 </div>
                 <div class="stars-info">
                     ⭐ <span id="starCount">0</span>/10
+                </div>
+                <button id="shopBtn" class="btn-shop">🛍️</button>
+            </div>
+
+            <div class="players-panel">
+                <div class="players-mini" id="playersMini">
+                    <!-- Мини-панель игроков -->
                 </div>
             </div>
 
@@ -80,7 +122,7 @@
 
                 <div class="player-rocket" id="playerRocket">
                     <div class="rocket">🚀</div>
-                    <div class rocket-trail></div>
+                    <div class="rocket-trail"></div>
                 </div>
 
                 <div class="destination-planet">
@@ -92,6 +134,30 @@
             <div class="game-controls">
                 <button id="rollDiceBtn" class="btn-dice">🎲 БРОСИТЬ КУБИК</button>
                 <div class="dice-result" id="diceResult"></div>
+            </div>
+        </div>
+
+        <!-- Экран магазина -->
+        <div id="shopScreen" class="screen">
+            <div class="screen-content">
+                <div class="shop-header">
+                    <h1>КОСМИЧЕСКИЙ МАГАЗИН</h1>
+                    <div class="balance">⭐ <span id="shopBalance">0</span></div>
+                </div>
+                
+                <div class="shop-categories">
+                    <button class="category-btn active" data-category="skills">Навыки</button>
+                    <button class="category-btn" data-category="items">Предметы</button>
+                    <button class="category-btn" data-category="boosters">Усилители</button>
+                </div>
+                
+                <div class="shop-items" id="shopItems">
+                    <!-- Товары будут загружаться через JS -->
+                </div>
+                
+                <div class="shop-controls">
+                    <button id="backToGameBtn" class="btn-secondary">Вернуться в игру</button>
+                </div>
             </div>
         </div>
 
@@ -168,7 +234,7 @@
         </div>
 
         <!-- Аудио элементы -->
-        <audio id backgroundMusic loop>
+        <audio id="backgroundMusic" loop>
             <source src="https://assets.mixkit.co/music/preview/mixkit-space-game-668.mp3" type="audio/mpeg">
         </audio>
         <audio id="diceSound">

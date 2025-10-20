@@ -1,0 +1,1127 @@
+/* ===== КОСМИЧЕСКИЕ СТИЛИ ===== */
+:root {
+    --space-dark: #0a0a2a;
+    --space-darker: #050518;
+    --space-blue: #1a1a4a;
+    --space-purple: #4a1a6a;
+    --cosmic-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --star-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    --planet-blue: linear-gradient(135deg, #74b9ff, #0984e3);
+    --planet-red: linear-gradient(135deg, #ff7675, #d63031);
+    --planet-green: linear-gradient(135deg, #00b894, #00a085);
+    --planet-yellow: linear-gradient(135deg, #fdcb6e, #f39c12);
+    
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --card-bg-hover: rgba(255, 255, 255, 0.15);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-gold: #FFD700;
+    
+    --border-radius: 20px;
+    --border-radius-lg: 25px;
+    --shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 30px rgba(102, 126, 234, 0.6);
+    --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--space-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 10px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Космический фон */
+.space-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+}
+
+.twinkling {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/twinkling.png') repeat;
+    animation: move-twink-back 200s linear infinite;
+}
+
+@keyframes move-twink-back {
+    from { background-position: 0 0; }
+    to { background-position: -10000px 5000px; }
+}
+
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
+.app {
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+    animation: fadeInUp 1s ease-out;
+}
+
+/* ===== КОСМИЧЕСКИЙ ЗАГОЛОВОК ===== */
+.cosmic-header {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 25px;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.cosmic-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--star-gradient);
+    animation: shimmer 3s infinite;
+}
+
+.cosmic-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+    background: var(--star-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    letter-spacing: 1px;
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+.rocket-decoration {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 32px;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ===== КОСМИЧЕСКИЕ КАРТОЧКИ ===== */
+.cosmic-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 25px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    animation: slideUp 0.6s ease-out;
+}
+
+.cosmic-card:hover {
+    background: var(--card-bg-hover);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow), var(--shadow-glow);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--glass-border);
+}
+
+.card-header h3 {
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-count {
+    background: var(--star-gradient);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+/* ===== ФОРМЫ И ВВОД ===== */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+.cosmic-input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.cosmic-input {
+    padding: 16px 20px;
+    border-radius: 15px;
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 16px;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    font-family: 'Inter', sans-serif;
+}
+
+.cosmic-input:focus {
+    outline: none;
+    border-color: #74b9ff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.cosmic-select {
+    padding: 16px 20px;
+    border-radius: 15px;
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 16px;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.cosmic-select:focus {
+    outline: none;
+    border-color: #74b9ff;
+    box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.2);
+}
+
+/* ===== ВЫБОР ЦВЕТА ===== */
+.color-selection {
+    margin: 25px 0;
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.color-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--glass-bg);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.color-option:hover {
+    background: var(--card-bg-hover);
+    transform: translateY(-2px);
+}
+
+.color-option.selected {
+    border-color: #74b9ff;
+    background: rgba(116, 185, 255, 0.1);
+    box-shadow: 0 0 20px rgba(116, 185, 255, 0.3);
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.color-option span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* ===== КОСМИЧЕСКИЕ КНОПКИ ===== */
+.cosmic-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    color: white;
+    padding: 18px 25px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.add-btn {
+    background: var(--planet-green);
+    box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+}
+
+.start-btn {
+    background: var(--star-gradient);
+    color: #000;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    font-weight: 800;
+}
+
+.roll-btn {
+    background: var(--cosmic-gradient);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.next-btn {
+    background: var(--planet-blue);
+    box-shadow: 0 8px 25px rgba(116, 185, 255, 0.3);
+}
+
+.success-btn {
+    background: var(--planet-green);
+    box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+}
+
+.skip-btn {
+    background: var(--planet-yellow);
+    box-shadow: 0 8px 25px rgba(253, 203, 110, 0.3);
+    color: #000;
+}
+
+.end-btn {
+    background: var(--planet-red);
+    box-shadow: 0 8px 25px rgba(255, 118, 117, 0.3);
+}
+
+.new-game-btn {
+    background: var(--star-gradient);
+    color: #000;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    font-weight: 800;
+}
+
+.cosmic-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.cosmic-btn:active {
+    transform: translateY(-1px) scale(1.01);
+}
+
+.cosmic-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-icon {
+    font-size: 20px;
+}
+
+.btn-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff7675;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== СПИСОК ИГРОКОВ ===== */
+.players-card {
+    margin-top: 20px;
+}
+
+.players-list {
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px 25px;
+    color: var(--text-muted);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+    animation: bounce 2s infinite;
+}
+
+.empty-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.empty-subtext {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass-bg);
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid;
+    transition: var(--transition);
+    animation: slideInRight 0.5s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+}
+
+.player-item:hover {
+    background: var(--card-bg-hover);
+    transform: translateX(8px) translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.player-item.blue { border-left-color: #74b9ff; background: linear-gradient(135deg, rgba(116, 185, 255, 0.1), transparent); }
+.player-item.red { border-left-color: #ff6b6b; background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), transparent); }
+.player-item.green { border-left-color: #00b894; background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), transparent); }
+.player-item.yellow { border-left-color: #fdcb6e; background: linear-gradient(135deg, rgba(253, 203, 110, 0.1), transparent); }
+.player-item.purple { border-left-color: #6c5ce7; background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), transparent); }
+.player-item.orange { border-left-color: #fd9644; background: linear-gradient(135deg, rgba(253, 150, 68, 0.1), transparent); }
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.player-color {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.player-color.blue { background: #74b9ff; }
+.player-color.red { background: #ff6b6b; }
+.player-color.green { background: #00b894; }
+.player-color.yellow { background: #fdcb6e; }
+.player-color.purple { background: #6c5ce7; }
+.player-color.orange { background: #fd9644; }
+
+.remove-player {
+    background: linear-gradient(135deg, #ff7675, #d63031);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 118, 117, 0.4);
+}
+
+.remove-player:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 20px rgba(255, 118, 117, 0.6);
+}
+
+/* ===== ТЕКУЩИЙ ИГРОК ===== */
+.current-player-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--star-gradient);
+    position: relative;
+    overflow: hidden;
+    animation: glowPulse 2s ease-in-out infinite alternate;
+}
+
+.current-player-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 3s infinite;
+}
+
+.player-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    animation: bounce 2s infinite;
+}
+
+.player-name {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+.player-profession {
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.player-stats {
+    display: flex;
+    gap: 12px;
+}
+
+.stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    backdrop-filter: blur(10px);
+}
+
+.stat-icon {
+    font-size: 16px;
+}
+
+.turn-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #000;
+    backdrop-filter: blur(10px);
+}
+
+.pulse {
+    width: 10px;
+    height: 10px;
+    background: #00b894;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+/* ===== ИГРОВОЕ ПОЛЕ ===== */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    padding: 20px;
+    background: var(--glass-bg);
+    border-radius: 15px;
+    border: 2px solid var(--glass-border);
+}
+
+.cell {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    position: relative;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.cell:hover {
+    transform: scale(1.1);
+}
+
+.cell.blue { background: var(--planet-blue); }
+.cell.red { background: var(--planet-red); }
+.cell.green { background: var(--planet-green); }
+.cell.yellow { background: var(--planet-yellow); }
+
+.cell.current {
+    box-shadow: 0 0 0 3px var(--text-gold), 0 0 20px rgba(255, 215, 0, 0.5);
+    transform: scale(1.1);
+}
+
+.cell.final {
+    background: var(--star-gradient);
+    animation: finalGlow 2s ease-in-out infinite alternate;
+}
+
+.player-marker {
+    position: absolute;
+    bottom: 2px;
+    font-size: 12px;
+}
+
+/* ===== КУБИК ===== */
+.dice-container {
+    position: relative;
+    display: inline-block;
+    margin: 20px 0;
+    perspective: 1000px;
+}
+
+.dice {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.5),
+        inset 5px 5px 10px rgba(255, 255, 255, 0.9),
+        inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+    transition: var(--transition);
+    position: relative;
+    z-index: 2;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    transform-style: preserve-3d;
+}
+
+.dice-face {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+}
+
+.dice-number {
+    font-size: 42px;
+    font-weight: bold;
+    color: #2d3436;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+}
+
+.dice-shadow {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    filter: blur(15px);
+    z-index: 1;
+    transition: var(--transition);
+}
+
+.dice.rolling {
+    animation: cosmicRoll 1.5s ease-in-out infinite;
+}
+
+.dice.rolling + .dice-shadow {
+    animation: shadowPulse 1.5s ease-in-out infinite;
+}
+
+.dice-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 18px;
+    background: var(--glass-bg);
+    padding: 15px 25px;
+    border-radius: 25px;
+    display: inline-flex;
+    min-width: 200px;
+    border: 2px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== ЗАДАНИЯ ПЛАНЕТ ===== */
+.quest-content {
+    text-align: center;
+}
+
+.planet-name {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    background: var(--star-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.quest-description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: var(--glass-bg);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+}
+
+.quest-timer {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-gold);
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.completion-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* ===== ТАБЛИЦА ЛИДЕРОВ ===== */
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: var(--glass-bg);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition);
+}
+
+.leaderboard-item:hover {
+    background: var(--card-bg-hover);
+    transform: translateX(5px);
+}
+
+.leaderboard-item.current {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: var(--text-gold);
+}
+
+.leaderboard-rank {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-gold);
+    min-width: 30px;
+}
+
+.leaderboard-player {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.leaderboard-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* ===== ИСТОРИЯ МИССИИ ===== */
+.mission-history {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: var(--glass-bg);
+    border-radius: 10px;
+    border-left: 4px solid;
+    font-size: 13px;
+    transition: var(--transition);
+}
+
+.history-item:hover {
+    background: var(--card-bg-hover);
+    transform: translateX(5px);
+}
+
+.history-item.blue { border-left-color: #74b9ff; }
+.history-item.red { border-left-color: #ff6b6b; }
+.history-item.green { border-left-color: #00b894; }
+.history-item.yellow { border-left-color: #fdcb6e; }
+
+/* ===== ЭКРАН ПОБЕДЫ ===== */
+.victory-card {
+    text-align: center;
+    background: var(--star-gradient);
+    color: #000;
+}
+
+.victory-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.victory-icon {
+    font-size: 48px;
+    animation: bounce 2s infinite;
+}
+
+.victory-header h2 {
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.confetti {
+    font-size: 32px;
+    animation: bounce 2s infinite reverse;
+}
+
+.winner-info {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 25px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.final-leaderboard {
+    margin-bottom: 25px;
+}
+
+/* ===== АНИМАЦИИ ===== */
+@keyframes cosmicRoll {
+    0% { 
+        transform: rotateX(0) rotateY(0) rotateZ(0) scale(1) translateY(0px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+    25% { 
+        transform: rotateX(180deg) rotateY(90deg) rotateZ(45deg) scale(1.1) translateY(-20px);
+        box-shadow: 0 25px 45px rgba(108, 92, 231, 0.6);
+    }
+    50% { 
+        transform: rotateX(360deg) rotateY(180deg) rotateZ(90deg) scale(1) translateY(0px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+    75% { 
+        transform: rotateX(540deg) rotateY(270deg) rotateZ(135deg) scale(1.1) translateY(-20px);
+        box-shadow: 0 25px 45px rgba(108, 92, 231, 0.6);
+    }
+    100% { 
+        transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg) scale(1) translateY(0px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+}
+
+@keyframes shadowPulse {
+    0%, 100% { 
+        width: 100px;
+        opacity: 0.4;
+    }
+    50% { 
+        width: 110px;
+        opacity: 0.6;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    100% {
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
+    }
+}
+
+@keyframes finalGlow {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 480px) {
+    .app {
+        padding: 5px;
+    }
+    
+    .cosmic-header h1 {
+        font-size: 20px;
+    }
+    
+    .cosmic-input-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .color-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .current-player-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .completion-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-board {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ===== СКРОЛЛБАР ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--star-gradient);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #FFEC8B, #FFD700);
+}
+/* Дополнительные анимации */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Стили для уведомлений */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    z-index: 10000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: slideInRight 0.5s ease-out;
+}
+
+.notification.success {
+    background: #00b894;
+    color: white;
+}
+
+.notification.error {
+    background: #ff7675;
+    color: white;
+}
+
+.notification.warning {
+    background: #fdcb6e;
+    color: #000;
+}
+
+.notification.info {
+    background: #74b9ff;
+    color: white;
+}

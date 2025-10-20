@@ -3,6 +3,437 @@ console.log('🎮 Загрузка космической игры...');
 
 class CosmicProfessionGame {
     constructor() {
+        // ===== КОСМИЧЕСКАЯ ИГРА С TELEGRAM ИНТЕГРАЦИЕЙ =====
+console.log('🎮 Загрузка космической игры...');
+
+class CosmicProfessionGame {
+    constructor() {
+        console.log('🔄 Создание космической миссии...');
+        this.players = [];
+        this.currentPlayerIndex = 0;
+        this.currentTurn = 1;
+        this.gameState = 'setup';
+        this.gameBoard = [];
+        this.history = [];
+        this.diceValue = 0;
+        this.currentQuest = null;
+        this.selectedColor = 'blue';
+        this.timer = null;
+        this.tg = null;
+        this.telegramUser = null;
+        this.hapticAvailable = false;
+        
+        this.initializeTelegram();
+        this.initializeGame();
+    }
+
+    initializeTelegram() {
+        // Интеграция с Telegram Web App
+        if (window.Telegram && window.Telegram.WebApp) {
+            this.tg = window.Telegram.WebApp;
+            
+            console.log('✅ Telegram Web App подключен');
+            console.log('📱 Платформа:', this.tg.platform);
+            console.log('🎨 Тема:', this.tg.colorScheme);
+            console.log('📏 Viewport:', this.tg.viewportHeight, 'x', this.tg.viewportWidth);
+            
+            // Настройка интерфейса
+            this.tg.setHeaderColor('#6c5ce7');
+            this.tg.setBackgroundColor('#0a0a2a');
+            
+            // Получаем данные пользователя
+            this.telegramUser = this.tg.initDataUnsafe?.user;
+            if (this.telegramUser) {
+                console.log('👤 Пользователь Telegram:', this.telegramUser);
+                this.personalizeForUser();
+            }
+            
+            // Настройка вибрации
+            this.setupHapticFeedback();
+            
+            // Обработчики событий Telegram
+            this.setupTelegramEvents();
+            
+        } else {
+            console.log('🌐 Запуск в обычном браузере');
+        }
+    }
+
+    setupTelegramEvents() {
+        if (!this.tg) return;
+        
+        // Изменение темы
+        this.tg.onEvent('themeChanged', () => {
+            console.log('Тема изменена на:', this.tg.colorScheme);
+            this.applyTelegramTheme();
+        });
+        
+        // Изменение размера окна
+        this.tg.onEvent('viewportChanged', (event) => {
+            console.log('Viewport изменен:', event);
+            this.adjustForViewport();
+        });
+        
+        // Закрытие приложения
+        this.tg.onEvent('closed', () => {
+            console.log('Приложение закрыто');
+            this.saveToStorage(); // Сохраняем при закрытии
+        });
+    }
+
+    personalizeForUser() {
+        if (!this.telegramUser) return;
+        
+        // Персонализируем приветствие
+        const welcomeElement = document.getElementById('userWelcome');
+        if (welcomeElement) {
+            welcomeElement.textContent = `👋 ${this.telegramUser.first_name}`;
+        }
+        
+        // Можно использовать username для сохранений
+        if (this.telegramUser.username) {
+            console.log('💾 Username для сохранений:', this.telegramUser.username);
+        }
+    }
+
+    applyTelegramTheme() {
+        if (!this.tg) return;
+        
+        if (this.tg.colorScheme === 'dark') {
+            document.documentElement.style.setProperty('--space-dark', '#0a0a2a');
+            document.documentElement.style.setProperty('--space-darker', '#050518');
+            document.documentElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.08)');
+        } else {
+            document.documentElement.style.setProperty('--space-dark', '#1a1a4a');
+            document.documentElement.style.setProperty('--space-darker', '#0f0f2a');
+            document.documentElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.12)');
+        }
+    }
+
+    setupHapticFeedback() {
+        // Проверяем поддержку вибрации
+        if (this.tg && this.tg.isVersionAtLeast('6.1') && 'vibrate' in navigator) {
+            this.hapticAvailable = true;
+            console.log('📳 Вибрация доступна');
+        }
+    }
+
+    playHapticFeedback(type) {
+        if (!this.hapticAvailable) return;
+        
+        const patterns = {
+            success: [50, 50, 50],        // Успех
+            error: [150, 50, 150],        // Ошибка
+            warning: [100],               // Предупреждение
+            selection: [50],              // Выбор
+            heavy: [200],                 // Важное событие
+            light: [30]                   // Легкое уведомление
+        };
+        
+        const pattern = patterns[type] || patterns.light;
+        
+        try {
+            navigator.vibrate(pattern);
+            console.log('📳 Вибрация:', type, pattern);
+        } catch (error) {
+            console.log('⚠️ Вибрация не сработала:', error);
+        }
+    }
+
+    adjustForViewport() {
+        if (!this.tg) return;
+        
+        const viewportHeight = this.tg.viewportHeight;
+        console.log('📏 Высота viewport:', viewportHeight);
+        
+        // Адаптируем интерфейс под маленькие экраны
+        if (viewportHeight < 600) {
+            document.body.classList.add('compact-view');
+        } else {
+            document.body.classList.remove('compact-view');
+        }
+    }
+
+    // ОБНОВЛЕННЫЙ МЕТОД ПОКАЗА УВЕДОМЛЕНИЙ
+    showMessage(message, type = 'info') {
+        console.log(`💬 ${type}: ${message}`);
+        
+        // Вибрация в зависимости от типа сообщения
+        this.playHapticFeedback(type);
+        
+        // Создаем уведомление
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        
+        const icons = {
+            success: '✅',
+            error: '❌', 
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-icon">${icons[type] || 'ℹ️'}</span>
+                <span class="notification-text">${message}</span>
+            </div>
+        `;
+        
+        // Применяем стили
+        const colors = {
+            success: 'linear-gradient(135deg, #00b894, #00a085)',
+            error: 'linear-gradient(135deg, #ff7675, #d63031)',
+            warning: 'linear-gradient(135deg, #fdcb6e, #f39c12)',
+            info: 'linear-gradient(135deg, #74b9ff, #0984e3)'
+        };
+        
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type] || colors.info};
+            color: ${type === 'warning' ? '#000' : 'white'};
+            padding: 15px 20px;
+            border-radius: 15px;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: slideInRight 0.5s ease-out;
+            max-width: 300px;
+            font-weight: 600;
+            font-size: 14px;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Автоматическое удаление
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.5s ease-out forwards';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 500);
+        }, 3000);
+    }
+
+    // ОБНОВЛЕННЫЙ МЕТОД СОХРАНЕНИЯ С УЧЕТОМ TELEGRAM USER
+    saveToStorage() {
+        try {
+            const gameData = {
+                players: this.players,
+                currentPlayerIndex: this.currentPlayerIndex,
+                currentTurn: this.currentTurn,
+                gameState: this.gameState,
+                history: this.history,
+                gameBoard: this.gameBoard,
+                diceValue: this.diceValue,
+                currentQuest: this.currentQuest,
+                saveTime: new Date().toISOString(),
+                // Добавляем информацию о пользователе Telegram для персонализации
+                telegramUser: this.telegramUser ? {
+                    id: this.telegramUser.id,
+                    username: this.telegramUser.username
+                } : null
+            };
+            
+            // Создаем уникальный ключ для пользователя Telegram
+            const storageKey = this.telegramUser ? 
+                `cosmicProfessionGame_${this.telegramUser.id}` : 
+                'cosmicProfessionGame';
+            
+            localStorage.setItem(storageKey, JSON.stringify(gameData));
+            console.log('💾 Игра сохранена:', storageKey);
+            
+        } catch (e) {
+            console.warn('⚠️ Не удалось сохранить игру:', e);
+        }
+    }
+
+    // ОБНОВЛЕННЫЙ МЕТОД ЗАГРУЗКИ С УЧЕТОМ TELEGRAM USER
+    loadFromStorage() {
+        try {
+            // Создаем уникальный ключ для пользователя Telegram
+            const storageKey = this.telegramUser ? 
+                `cosmicProfessionGame_${this.telegramUser.id}` : 
+                'cosmicProfessionGame';
+            
+            const saved = localStorage.getItem(storageKey);
+            if (saved) {
+                const gameData = JSON.parse(saved);
+                
+                this.players = gameData.players || [];
+                this.currentPlayerIndex = gameData.currentPlayerIndex || 0;
+                this.currentTurn = gameData.currentTurn || 1;
+                this.gameState = gameData.gameState || 'setup';
+                this.history = gameData.history || [];
+                this.gameBoard = gameData.gameBoard || [];
+                this.diceValue = gameData.diceValue || 0;
+                this.currentQuest = gameData.currentQuest || null;
+                
+                console.log('💾 Игра загружена из сохранения:', storageKey, this.players.length, 'космонавтов');
+                
+                // Восстанавливаем состояние интерфейса
+                this.restoreGameState();
+            }
+        } catch (e) {
+            console.error('❌ Ошибка загрузки сохранения:', e);
+        }
+    }
+
+    restoreGameState() {
+        switch (this.gameState) {
+            case 'playing':
+                document.getElementById('setupSection').style.display = 'none';
+                document.getElementById('gameInterface').style.display = 'block';
+                this.updateGameInterface();
+                this.showMessage('🚀 Продолжаем космическую миссию!', 'info');
+                break;
+                
+            case 'ended':
+                this.endGame();
+                break;
+                
+            default:
+                this.updatePlayersList();
+                this.updateStartButton();
+        }
+    }
+
+    // ОБНОВЛЕННЫЙ МЕТОД ДОБАВЛЕНИЯ ИГРОКА С TELEGRAM ДАННЫМИ
+    addPlayer() {
+        console.log('👤 Добавление космонавта...');
+        
+        const nameInput = document.getElementById('playerNameInput');
+        const professionInput = document.getElementById('professionInput');
+        const skillSelect = document.getElementById('mainSkillSelect');
+        const interestSelect = document.getElementById('interestSelect');
+        
+        if (!nameInput || !professionInput) {
+            this.showMessage('Ошибка загрузки формы', 'error');
+            return;
+        }
+
+        const name = nameInput.value.trim();
+        const profession = professionInput.value.trim();
+        const skill = skillSelect ? skillSelect.value : 'creativity';
+        const interest = interestSelect ? interestSelect.value : 'art';
+        const color = this.selectedColor;
+
+        console.log(`📝 Данные: "${name}", профессия: "${profession}", цвет: ${color}`);
+
+        // Валидация
+        if (!name) {
+            this.showMessage('Введите имя космонавта', 'error');
+            this.animateError(nameInput);
+            return;
+        }
+
+        if (!profession) {
+            this.showMessage('Придумайте название профессии', 'error');
+            this.animateError(professionInput);
+            return;
+        }
+
+        if (this.players.length >= GAME_CONFIG.maxPlayers) {
+            this.showMessage(`Максимум ${GAME_CONFIG.maxPlayers} космонавтов`, 'warning');
+            return;
+        }
+
+        // Создаем космонавта с дополнительными данными
+        const player = {
+            id: this.generateId(),
+            name: name,
+            profession: profession,
+            skill: skill,
+            interest: interest,
+            color: color,
+            stars: 0,
+            position: 0,
+            completedQuests: 0,
+            joinTime: new Date().toISOString(),
+            // Добавляем информацию о Telegram пользователе если есть
+            telegramData: this.telegramUser ? {
+                userId: this.telegramUser.id,
+                username: this.telegramUser.username
+            } : null
+        };
+
+        console.log('🎮 Создан космонавт:', player);
+
+        // Вибрация при успешном добавлении
+        this.playHapticFeedback('success');
+        
+        // Добавляем в массив
+        this.players.push(player);
+        
+        // Обновляем интерфейс
+        this.updatePlayersList();
+        this.updateStartButton();
+        
+        // Очищаем форму
+        this.resetForm(nameInput, professionInput);
+        
+        // Уведомление
+        this.showMessage(`🚀 Космонавт "${name}" присоединился к миссии!`, 'success');
+        
+        // Сохраняем
+        this.saveToStorage();
+
+        console.log('✅ Космонавт добавлен. Всего в экипаже:', this.players.length);
+    }
+
+    // ... остальные методы остаются как в предыдущей версии, но с добавлением вибрации
+    // в ключевых моментах (бросок кубика, выполнение заданий и т.д.)
+}
+
+// Глобальные функции для HTML
+function removePlayer(playerId) {
+    if (game && typeof game.removePlayer === 'function') {
+        game.removePlayer(playerId);
+    }
+}
+
+// Инициализация игры
+let game;
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏁 DOM загружен, запускаем космическую миссию...');
+    
+    try {
+        game = new CosmicProfessionGame();
+        console.log('🎉 Космическая игра успешно запущена!');
+        
+        // Делаем глобально доступным для HTML
+        window.game = game;
+        
+    } catch (error) {
+        console.error('💥 Критическая ошибка при запуске игры:', error);
+        
+        // Показываем пользователю ошибку
+        const errorMsg = document.createElement('div');
+        errorMsg.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ff7675;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 10000;
+            max-width: 300px;
+        `;
+        errorMsg.innerHTML = `
+            <h3>😔 Ошибка загрузки</h3>
+            <p>Игра не смогла запуститься. Пожалуйста, обновите страницу.</p>
+            <button onclick="location.reload()" style="margin-top: 10px; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">Обновить</button>
+        `;
+        document.body.appendChild(errorMsg);
+    }
+});
         console.log('🔄 Создание космической миссии...');
         this.players = [];
         this.currentPlayerIndex = 0;
@@ -822,4 +1253,5 @@ function removePlayer(playerId) {
     if (game && typeof game.removePlayer === 'function') {
         game.removePlayer(playerId);
     }
+
 }

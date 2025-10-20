@@ -1,0 +1,27 @@
+{
+    "name": "ПУТЕШЕСТВИЕ К ПЛАНЕТЕ ПРОФЕССИЙ",
+    "short_name": "КосмическаяПрофессия",
+    "description": "Космическая игра для создания профессий будущего. Создай свою профессию и покори вселенную!",
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "icons": [
+        {
+            "src": "https://raw.githubusercontent.com/your-username/cosmic-profession-game/main/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://raw.githubusercontent.com/your-username/cosmic-profession-game/main/icon-512.png",
+            "sizes": "512x512", 
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/cosmic-profession-game/",
+    "display": "standalone",
+    "theme_color": "#6c5ce7",
+    "background_color": "#0a0a2a",
+    "orientation": "portrait",
+    "scope": "/cosmic-profession-game/",
+    "categories": ["games", "education", "kids"],
+    "lang": "ru-RU"
+}

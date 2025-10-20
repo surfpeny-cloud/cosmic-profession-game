@@ -8,141 +8,17 @@
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Meta-теги для Telegram -->
+    <!-- Meta-теги -->
     <meta property="og:title" content="🌌 ПУТЕШЕСТВИЕ К ПЛАНЕТЕ ПРОФЕССИЙ">
     <meta property="og:description" content="Создай свою профессию будущего и покори космос!">
-    <meta property="og:image" content="https://raw.githubusercontent.com/your-username/cosmic-profession-game/main/icon-512.png">
-    <meta property="og:url" content="https://your-username.github.io/cosmic-profession-game">
-    
     <meta name="theme-color" content="#6c5ce7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="КосмическаяПрофессия">
     
     <link rel="stylesheet" href="style.css">
     
-    <!-- Telegram Web App инициализация -->
-    <script>
-    // Глобальная переменная для Telegram Web App
-    let tg = null;
-    let TelegramUser = null;
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Проверяем, что мы в Telegram Web App
-        if (window.Telegram && window.Telegram.WebApp) {
-            tg = window.Telegram.WebApp;
-            
-            console.log('🚀 Telegram Web App обнаружен');
-            console.log('Версия Web App:', tg.version);
-            console.log('Платформа:', tg.platform);
-            console.log('Цветовая схема:', tg.colorScheme);
-            
-            // Инициализация
-            tg.ready();
-            tg.expand(); // Расширяем на весь экран
-            tg.enableClosingConfirmation(); // Подтверждение закрытия
-            
-            // Настройка цветов под тему Telegram
-            if (tg.colorScheme === 'dark') {
-                document.documentElement.style.setProperty('--space-dark', '#0a0a2a');
-                document.documentElement.style.setProperty('--space-darker', '#050518');
-            } else {
-                document.documentElement.style.setProperty('--space-dark', '#1a1a4a');
-                document.documentElement.style.setProperty('--space-darker', '#0f0f2a');
-            }
-            
-            // Устанавливаем цвета для Telegram
-            tg.setHeaderColor('#6c5ce7');
-            tg.setBackgroundColor('#0a0a2a');
-            
-            // Получаем данные пользователя
-            const user = tg.initDataUnsafe?.user;
-            if (user) {
-                TelegramUser = user;
-                console.log('👤 Пользователь Telegram:', user);
-                
-                // Можно использовать для персонализации
-                document.getElementById('userWelcome').textContent = `Привет, ${user.first_name}!`;
-            }
-            
-            // Обработчики событий Telegram
-            tg.onEvent('themeChanged', () => {
-                console.log('Тема изменена:', tg.colorScheme);
-                if (tg.colorScheme === 'dark') {
-                    document.documentElement.style.setProperty('--space-dark', '#0a0a2a');
-                } else {
-                    document.documentElement.style.setProperty('--space-dark', '#1a1a4a');
-                }
-            });
-            
-            tg.onEvent('viewportChanged', (event) => {
-                console.log('Viewport изменен:', event);
-                tg.expand(); // Всегда расширяем
-            });
-            
-            tg.onEvent('mainButtonClicked', () => {
-                console.log('Main button clicked');
-            });
-            
-            // Показываем кнопку закрытия для Telegram
-            document.getElementById('tgMenu').style.display = 'block';
-            
-        } else {
-            console.log('🌐 Запуск в обычном браузере');
-            document.getElementById('browserWarning').style.display = 'block';
-        }
-    });
-
-    // Функция для закрытия Web App
-    function closeTelegramApp() {
-        if (tg) {
-            tg.close();
-        }
-    }
-    </script>
-</head>
-<body>
-    <!-- Предупреждение для браузера -->
-    <div id="browserWarning" class="browser-warning" style="display: none;">
-        <div class="warning-content">
-            <h3>🌐 Запуск в браузере</h3>
-            <p>Для лучшего опыта запустите игру через Telegram бота!</p>
-            <button onclick="this.parentElement.parentElement.style.display='none'">Понятно</button>
-        </div>
-    </div>
-
-    <!-- Меню Telegram -->
-    <div id="tgMenu" class="tg-menu" style="display: none;">
-        <button class="tg-close-btn" onclick="closeTelegramApp()">
-            ✕ Закрыть
-        </button>
-        <div id="userWelcome" class="user-welcome"></div>
-    </div>
-
-    <div class="app">
-        <!-- Космический фон -->
-        <div class="space-background">
-            <div class="stars"></div>
-            <div class="twinkling"></div>
-        </div>
-
-        <!-- Заголовок -->
-        <div class="header cosmic-header">
-            <div class="header-content">
-                <h1>🌌 ПУТЕШЕСТВИЕ К ПЛАНЕТЕ ПРОФЕССИЙ</h1>
-                <div class="subtitle">Создай свою профессию будущего!</div>
-                <div class="current-step" id="currentStep">Создайте своего космонавта</div>
-            </div>
-            <div class="rocket-decoration">🚀</div>
-        </div>
-
-        <!-- Остальная часть вашего HTML (как в предыдущей версии) -->
-        <!-- ... -->
-
-    </div>
-
-    <!-- Добавляем стили для Telegram элементов -->
     <style>
+    /* Дополнительные стили для Telegram */
     .browser-warning {
         position: fixed;
         top: 0;
@@ -154,6 +30,7 @@
         z-index: 10000;
         text-align: center;
         box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        display: none;
     }
 
     .warning-content button {
@@ -175,6 +52,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        display: none;
     }
 
     .tg-close-btn {
@@ -202,24 +80,381 @@
         backdrop-filter: blur(10px);
     }
 
-    /* Адаптация для Telegram Web App */
-    @media (max-height: 600px) {
-        .cosmic-card {
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .header {
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .cosmic-btn {
-            padding: 14px 20px;
-            font-size: 14px;
-        }
+    /* Анимации */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
     }
     </style>
+</head>
+<body>
+    <!-- Предупреждение для браузера -->
+    <div id="browserWarning" class="browser-warning">
+        <div class="warning-content">
+            <h3>🌐 Запуск в браузере</h3>
+            <p>Для лучшего опыта запустите игру через Telegram бота!</p>
+            <button onclick="this.parentElement.parentElement.style.display='none'">Понятно</button>
+        </div>
+    </div>
+
+    <!-- Меню Telegram -->
+    <div id="tgMenu" class="tg-menu">
+        <button class="tg-close-btn" onclick="closeTelegramApp()">
+            ✕ Закрыть
+        </button>
+        <div id="userWelcome" class="user-welcome"></div>
+    </div>
+
+    <div class="app">
+        <!-- Космический фон -->
+        <div class="space-background">
+            <div class="stars"></div>
+            <div class="twinkling"></div>
+        </div>
+
+        <!-- Заголовок -->
+        <div class="header cosmic-header">
+            <div class="header-content">
+                <h1>🌌 ПУТЕШЕСТВИЕ К ПЛАНЕТЕ ПРОФЕССИЙ</h1>
+                <div class="subtitle">Создай свою профессию будущего!</div>
+                <div class="current-step" id="currentStep">Создайте своего космонавта</div>
+            </div>
+            <div class="rocket-decoration">🚀</div>
+        </div>
+
+        <!-- Создание космонавта -->
+        <div class="setup-section" id="setupSection">
+            <div class="cosmic-card">
+                <div class="card-header">
+                    <h3>👨‍🚀 Создание космонавта</h3>
+                    <div class="player-count" id="playerCount">0 космонавтов</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">🎯 Информация о космонавте</label>
+                    
+                    <div class="cosmic-input-group">
+                        <input type="text" id="playerNameInput" placeholder="Имя космонавта" maxlength="20" class="cosmic-input">
+                        <input type="text" id="professionInput" placeholder="Название профессии" maxlength="30" class="cosmic-input">
+                    </div>
+                    
+                    <div class="skills-selection">
+                        <label class="form-label">⭐ Главный навык из "Цеха"</label>
+                        <select id="mainSkillSelect" class="cosmic-select">
+                            <option value="creativity">🎨 Творчество и рисование</option>
+                            <option value="construction">🔨 Строительство и создание</option>
+                            <option value="science">🔬 Наука и исследования</option>
+                            <option value="communication">💬 Общение и помощь</option>
+                            <option value="technology">💻 Технологии и программирование</option>
+                            <option value="nature">🌿 Природа и животные</option>
+                        </select>
+                        
+                        <label class="form-label">🔭 Сфера интересов из "Окна в профессии"</label>
+                        <select id="interestSelect" class="cosmic-select">
+                            <option value="art">🖼️ Искусство и красота</option>
+                            <option value="animals">🐾 Животные и природа</option>
+                            <option value="space">🛸 Космос и технологии</option>
+                            <option value="music">🎵 Музыка и звуки</option>
+                            <option value="games">🎮 Игры и развлечения</option>
+                            <option value="help">🤝 Помощь и забота</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-selection">
+                        <label class="form-label">🎨 Цвет ракеты</label>
+                        <div class="color-grid">
+                            <div class="color-option selected" data-color="blue">
+                                <div class="color-preview" style="background: #74b9ff;"></div>
+                                <span>Синяя</span>
+                            </div>
+                            <div class="color-option" data-color="red">
+                                <div class="color-preview" style="background: #ff6b6b;"></div>
+                                <span>Красная</span>
+                            </div>
+                            <div class="color-option" data-color="green">
+                                <div class="color-preview" style="background: #00b894;"></div>
+                                <span>Зеленая</span>
+                            </div>
+                            <div class="color-option" data-color="yellow">
+                                <div class="color-preview" style="background: #fdcb6e;"></div>
+                                <span>Желтая</span>
+                            </div>
+                            <div class="color-option" data-color="purple">
+                                <div class="color-preview" style="background: #6c5ce7;"></div>
+                                <span>Фиолетовая</span>
+                            </div>
+                            <div class="color-option" data-color="orange">
+                                <div class="color-preview" style="background: #fd9644;"></div>
+                                <span>Оранжевая</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cosmic-info-card">
+                    <div class="info-header">
+                        <span class="info-icon">🌟</span>
+                        <h4>Пример космической профессии</h4>
+                    </div>
+                    <div class="info-content">
+                        <div class="example-profession">
+                            <strong>Космический художник-ветеринар</strong><br>
+                            <em>Навык: рисование + Интерес: животные</em><br>
+                            Лечит космических животных и рисует их портреты!
+                        </div>
+                    </div>
+                </div>
+
+                <button id="addPlayerBtn" class="cosmic-btn add-btn">
+                    <span class="btn-icon">👨‍🚀</span>
+                    Добавить космонавта
+                </button>
+            </div>
+
+            <!-- Список космонавтов -->
+            <div class="cosmic-card players-card">
+                <div class="card-header">
+                    <h3>🚀 Экипаж корабля</h3>
+                </div>
+                <div class="players-list" id="playersList">
+                    <div class="empty-state">
+                        <div class="empty-icon">👥</div>
+                        <div class="empty-text">Экипаж пуст</div>
+                        <div class="empty-subtext">Добавьте первого космонавта</div>
+                    </div>
+                </div>
+                
+                <button id="startGameBtn" class="cosmic-btn start-btn" disabled>
+                    <span class="btn-icon">🌌</span>
+                    Начать космическое путешествие!
+                    <span class="btn-badge">2-6 космонавтов</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Игровой интерфейс -->
+        <div class="game-interface" id="gameInterface" style="display: none;">
+            <!-- Текущий игрок -->
+            <div class="current-player-section">
+                <div class="cosmic-card current-player-card glow">
+                    <div class="player-avatar" id="currentPlayerAvatar">
+                        <span class="avatar-emoji">👨‍🚀</span>
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name" id="currentPlayerName">Космонавт</div>
+                        <div class="player-profession" id="currentPlayerProfession">Профессия</div>
+                        <div class="player-stats">
+                            <div class="stat-badge reputation">
+                                <span class="stat-icon">⭐</span>
+                                <span class="stat-value" id="currentPlayerStars">0</span>
+                                <span class="stat-label">звезд</span>
+                            </div>
+                            <div class="stat-badge position">
+                                <span class="stat-icon">🛸</span>
+                                <span class="stat-value" id="currentPlayerPosition">0</span>
+                                <span class="stat-label">планета</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="turn-indicator" id="turnIndicator">
+                        <span class="pulse"></span>
+                        Твой ход!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Игровое поле -->
+            <div class="game-board-section">
+                <div class="cosmic-card">
+                    <div class="card-header">
+                        <h3>🛸 Космический путь</h3>
+                        <div class="game-status">
+                            <span>Ход: <span id="currentTurn">1</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-board" id="gameBoard">
+                        <!-- Игровое поле будет генерироваться JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Бросок кубика -->
+            <div class="dice-section">
+                <div class="cosmic-card">
+                    <div class="card-header">
+                        <h3>🎲 Бросок космического кубика</h3>
+                    </div>
+                    <div class="dice-container">
+                        <div class="dice" id="dice">
+                            <div class="dice-face">
+                                <div class="dice-number" id="diceNumber">?</div>
+                            </div>
+                        </div>
+                        <div class="dice-shadow"></div>
+                    </div>
+                    <button id="rollBtn" class="cosmic-btn roll-btn">
+                        <span class="btn-icon">🚀</span>
+                        Запустить ракету!
+                    </button>
+                    <div class="dice-result" id="diceResult">
+                        <span class="result-icon">📊</span>
+                        <span class="result-text">Результат: -</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Задание планеты -->
+            <div class="quest-section" id="questSection" style="display: none;">
+                <div class="cosmic-card">
+                    <div class="card-header">
+                        <h3 id="planetTypeIcon">🪐 Задание планеты</h3>
+                        <div class="planet-type" id="planetType">Тип планеты</div>
+                    </div>
+                    
+                    <div class="quest-content">
+                        <div class="planet-name" id="planetName">Название планеты</div>
+                        <div class="quest-description" id="questDescription">
+                            Задание появится после броска кубика
+                        </div>
+                        
+                        <div class="quest-timer" id="questTimer" style="display: none;">
+                            ⏰ <span id="timerValue">120</span> сек
+                        </div>
+                        
+                        <div class="completion-buttons" id="completionButtons" style="display: none;">
+                            <button id="successBtn" class="cosmic-btn success-btn">
+                                <span class="btn-icon">✅</span>
+                                Задание выполнено!
+                            </button>
+                            <button id="skipBtn" class="cosmic-btn skip-btn">
+                                <span class="btn-icon">⏭️</span>
+                                Пропустить задание
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Таблица лидеров -->
+            <div class="leaderboard-section">
+                <div class="cosmic-card">
+                    <div class="card-header">
+                        <h3>🏆 Космический рейтинг</h3>
+                    </div>
+                    <div class="leaderboard" id="leaderboard">
+                        <!-- Таблица будет генерироваться JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- История миссии -->
+            <div class="history-section">
+                <div class="cosmic-card">
+                    <div class="card-header">
+                        <h3>📡 История миссии</h3>
+                    </div>
+                    <div class="mission-history" id="missionHistory">
+                        <div class="empty-history">
+                            <div class="empty-icon">📝</div>
+                            <div class="empty-text">История миссии пуста</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Управление игрой -->
+            <div class="game-controls">
+                <button id="nextPlayerBtn" class="cosmic-btn next-btn">
+                    <span class="btn-icon">👨‍🚀</span>
+                    Следующий космонавт
+                </button>
+                <button id="endGameBtn" class="cosmic-btn end-btn">
+                    <span class="btn-icon">🏁</span>
+                    Завершить миссию
+                </button>
+            </div>
+        </div>
+
+        <!-- Экран победы -->
+        <div class="victory-section" id="victorySection" style="display: none;">
+            <div class="cosmic-card victory-card">
+                <div class="victory-header">
+                    <div class="victory-icon">🏆</div>
+                    <h2>Миссия выполнена!</h2>
+                    <div class="confetti">🎉</div>
+                </div>
+                
+                <div class="winner-info" id="winnerInfo">
+                    <!-- Информация о победителе -->
+                </div>
+                
+                <div class="final-leaderboard" id="finalLeaderboard">
+                    <!-- Финальные результаты -->
+                </div>
+                
+                <button id="newGameBtn" class="cosmic-btn new-game-btn">
+                    <span class="btn-icon">🔄</span>
+                    Новая миссия
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Telegram Web App инициализация -->
+    <script>
+    let tg = null;
+    let TelegramUser = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            
+            console.log('🚀 Telegram Web App обнаружен');
+            
+            tg.ready();
+            tg.expand();
+            tg.enableClosingConfirmation();
+            
+            tg.setHeaderColor('#6c5ce7');
+            tg.setBackgroundColor('#0a0a2a');
+            
+            TelegramUser = tg.initDataUnsafe?.user;
+            if (TelegramUser) {
+                console.log('👤 Пользователь Telegram:', TelegramUser);
+                const welcomeElement = document.getElementById('userWelcome');
+                if (welcomeElement) {
+                    welcomeElement.textContent = `👋 ${TelegramUser.first_name}`;
+                }
+            }
+            
+            document.getElementById('tgMenu').style.display = 'flex';
+            
+        } else {
+            console.log('🌐 Запуск в обычном браузере');
+            document.getElementById('browserWarning').style.display = 'block';
+        }
+    });
+
+    function closeTelegramApp() {
+        if (tg) {
+            tg.close();
+        }
+    }
+
+    // Глобальные функции для HTML
+    function removePlayer(playerId) {
+        if (window.game && typeof window.game.removePlayer === 'function') {
+            window.game.removePlayer(playerId);
+        }
+    }
+    </script>
 
     <script src="data.js"></script>
     <script src="game.js"></script>

@@ -1,3 +1,5 @@
+// СОЗДАЙТЕ НОВЫЙ ФАЙЛ data.js И СКОПИРУЙТЕ ВЕСЬ ЭТОТ КОД
+
 // Данные для игры
 const GameData = {
     // Навыки из "Цеха"
@@ -121,6 +123,129 @@ const GameData = {
         "Спутник-1"
     ],
 
+    // Данные для магазина
+    shopItems: {
+        skills: [
+            {
+                id: 'double_stars',
+                name: 'Удвоитель звезд',
+                description: 'Получай в 2 раза больше звезд за задания на 3 хода',
+                price: 15,
+                icon: '⭐⭐',
+                type: 'booster',
+                duration: 3
+            },
+            {
+                id: 'extra_dice',
+                name: 'Улучшенный кубик',
+                description: 'Бросай два кубика и выбирай лучший результат',
+                price: 20,
+                icon: '🎲🎲',
+                type: 'skill',
+                permanent: true
+            },
+            {
+                id: 'time_extend',
+                name: 'Дополнительное время',
+                description: '+30 секунд на выполнение заданий',
+                price: 10,
+                icon: '⏰',
+                type: 'skill',
+                permanent: true
+            },
+            {
+                id: 'auto_complete',
+                name: 'Автозавершение',
+                description: 'Автоматически получай 1 звезду за простые задания',
+                price: 25,
+                icon: '🤖',
+                type: 'skill',
+                permanent: true
+            }
+        ],
+        
+        items: [
+            {
+                id: 'rocket_boost',
+                name: 'Ракетный ускоритель',
+                description: 'Пропусти следующую планету без выполнения задания',
+                price: 8,
+                icon: '🚀',
+                type: 'item',
+                consumable: true
+            },
+            {
+                id: 'shield',
+                name: 'Энергетический щит',
+                description: 'Защита от негативных космических событий',
+                price: 12,
+                icon: '🛡️',
+                type: 'item',
+                consumable: true
+            },
+            {
+                id: 'teleport',
+                name: 'Телепорт',
+                description: 'Переместись на любую планету вперед',
+                price: 30,
+                icon: '🌀',
+                type: 'item',
+                consumable: true
+            },
+            {
+                id: 'star_magnet',
+                name: 'Звездный магнит',
+                description: 'Автоматически собирай звезды с пролетаемых планет',
+                price: 18,
+                icon: '🧲',
+                type: 'item',
+                consumable: true
+            }
+        ],
+        
+        boosters: [
+            {
+                id: 'lucky_charm',
+                name: 'Счастливый талисман',
+                description: 'Увеличивает шанс выпадения 6 на кубике',
+                price: 15,
+                icon: '🍀',
+                type: 'booster',
+                duration: 5
+            },
+            {
+                id: 'inspiration',
+                name: 'Вдохновение',
+                description: '+1 дополнительная звезда за творческие задания',
+                price: 12,
+                icon: '💡',
+                type: 'booster',
+                duration: 4
+            },
+            {
+                id: 'diplomacy',
+                name: 'Космическая дипломатия',
+                description: 'Упрощает убеждение других игроков',
+                price: 10,
+                icon: '🕊️',
+                type: 'booster',
+                duration: 3
+            }
+        ]
+    },
+
+    // Аватары для игроков
+    avatars: [
+        '👨‍🚀', '👩‍🚀', '🧑‍🚀', '👨‍🔬', '👩‍🔬', '🧑‍🔬', 
+        '👨‍🎨', '👩‍🎨', '🧑‍🎨', '👨‍💻', '👩‍💻', '🧑‍💻'
+    ],
+
+    // Цвета для игроков
+    playerColors: [
+        '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
+        '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'
+    ],
+
     // Генератор названий профессий
     generateProfession: function(skill, interest) {
         const prefixes = [
@@ -136,10 +261,10 @@ const GameData = {
         const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
         
         // Создаем уникальное название профессии на основе навыка и интереса
-        let professionName = `${prefix} ${skill.toLowerCase()}${interest.toLowerCase()}`;
+        let professionName = `${prefix} ${skill.toLowerCase()}-${interest.toLowerCase()}`;
         
         // Добавляем суффикс
-        professionName += `-${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
+        professionName += ` ${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
         
         return professionName;
     },

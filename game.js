@@ -1,7 +1,13 @@
+// СОЗДАЙТЕ НОВЫЙ ФАЙЛ game.js И СКОПИРУЙТЕ ВЕСЬ ЭТОТ КОД
+
 // Основной игровой код
 class CosmicProfessionGame {
     constructor() {
         this.currentScreen = 'loading';
+        this.players = [];
+        this.currentPlayerIndex = 0;
+        this.gameMode = 'single'; // 'single' или 'multiplayer'
+        this.shopItems = {};
         this.player = null;
         this.gameState = {
             currentPosition: 0,
@@ -9,14 +15,16 @@ class CosmicProfessionGame {
             planets: [],
             currentPlanet: null,
             diceValue: 0,
-            gameStarted: false
+            gameStarted: false,
+            players: [],
+            currentPlayerIndex: 0
         };
         
         this.init();
     }
 
     init() {
-        console.log('🚀 Инициализация космической игры...');
+        console.log('🚀 Инициализация космической игры с мультиплеером...');
         
         // Инициализация данных
         this.loadGameData();
@@ -26,7 +34,7 @@ class CosmicProfessionGame {
         
         // Имитация загрузки
         setTimeout(() => {
-            this.showScreen('profile');
+            this.showScreen('mode');
             this.setupEventListeners();
         }, 3000);
     }
@@ -38,11 +46,12 @@ class CosmicProfessionGame {
         
         // Создаем игровое поле
         this.gameState.planets = GameData.createGameBoard(15);
-        this.renderGameBoard();
     }
 
     populateSkills() {
         const container = document.getElementById('skillsContainer');
+        if (!container) return;
+        
         container.innerHTML = '';
         
         GameData.skills.forEach(skill => {
@@ -56,6 +65,8 @@ class CosmicProfessionGame {
 
     populateInterests() {
         const container = document.getElementById('interestsContainer');
+        if (!container) return;
+        
         container.innerHTML = '';
         
         GameData.interests.forEach(interest => {
@@ -85,54 +96,233 @@ class CosmicProfessionGame {
         const professionDisplay = document.getElementById('professionDisplay');
         const startBtn = document.getElementById('startGameBtn');
 
-        if (skillBtn && interestBtn) {
+        if (skillBtn && interestBtn && professionDisplay && startBtn) {
             const skill = skillBtn.textContent;
             const interest = interestBtn.textContent;
             const profession = GameData.generateProfession(skill, interest);
             professionDisplay.textContent = profession;
             startBtn.disabled = false;
-        } else {
+        } else if (professionDisplay && startBtn) {
             professionDisplay.textContent = 'Космический ...';
             startBtn.disabled = true;
         }
     }
 
     setupEventListeners() {
-        // Кнопка начала игры
-        document.getElementById('startGameBtn').addEventListener('click', () => {
-            this.createPlayerProfile();
-            this.startGame();
-        });
+        // Кнопка начала игры (одиночный режим)
+        const startGameBtn = document.getElementById('startGameBtn');
+        if (startGameBtn) {
+            startGameBtn.addEventListener('click', () => {
+                this.createPlayerProfile();
+                this.startSingleGame();
+            });
+        }
+
+        // Кнопки выбора режима
+        const singlePlayerBtn = document.getElementById('singlePlayerBtn');
+        const multiplayerBtn = document.getElementById('multiplayerBtn');
+        
+        if (singlePlayerBtn) {
+            singlePlayerBtn.addEventListener('click', () => {
+                this.gameMode = 'single';
+                this.showScreen('profile');
+            });
+        }
+
+        if (multiplayerBtn) {
+            multiplayerBtn.addEventListener('click', () => {
+                this.gameMode = 'multiplayer';
+                this.showScreen('players');
+                this.initMultiplayer();
+            });
+        }
+
+        // Кнопки мультиплеера
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        const startMultiplayerBtn = document.getElementById('startMultiplayerBtn');
+        
+        if (addPlayerBtn) {
+            addPlayerBtn.addEventListener('click', () => {
+                this.addPlayer();
+            });
+        }
+
+        if (startMultiplayerBtn) {
+            startMultiplayerBtn.addEventListener('click', () => {
+                this.startMultiplayerGame();
+            });
+        }
+
+        // Кнопка магазина
+        const shopBtn = document.getElementById('shopBtn');
+        if (shopBtn) {
+            shopBtn.addEventListener('click', () => {
+                this.openShop();
+            });
+        }
+
+        // Кнопка возврата из магазина
+        const backToGameBtn = document.getElementById('backToGameBtn');
+        if (backToGameBtn) {
+            backToGameBtn.addEventListener('click', () => {
+                this.showScreen('game');
+            });
+        }
 
         // Кнопка броска кубика
-        document.getElementById('rollDiceBtn').addEventListener('click', () => {
-            this.rollDice();
-        });
+        const rollDiceBtn = document.getElementById('rollDiceBtn');
+        if (rollDiceBtn) {
+            rollDiceBtn.addEventListener('click', () => {
+                this.rollDice();
+            });
+        }
 
         // Кнопки для заданий
-        document.getElementById('submitSolution').addEventListener('click', () => {
-            this.submitSolution();
-        });
+        const submitSolution = document.getElementById('submitSolution');
+        if (submitSolution) {
+            submitSolution.addEventListener('click', () => {
+                this.submitSolution();
+            });
+        }
 
-        document.getElementById('startPresentation').addEventListener('click', () => {
-            this.startPresentation();
-        });
+        const startPresentation = document.getElementById('startPresentation');
+        if (startPresentation) {
+            startPresentation.addEventListener('click', () => {
+                this.startPresentation();
+            });
+        }
 
-        document.getElementById('submitHelp').addEventListener('click', () => {
-            this.submitHelp();
-        });
+        const submitHelp = document.getElementById('submitHelp');
+        if (submitHelp) {
+            submitHelp.addEventListener('click', () => {
+                this.submitHelp();
+            });
+        }
 
-        document.getElementById('continueBtn').addEventListener('click', () => {
-            this.continueGame();
-        });
+        const continueBtn = document.getElementById('continueBtn');
+        if (continueBtn) {
+            continueBtn.addEventListener('click', () => {
+                this.continueGame();
+            });
+        }
 
-        document.getElementById('restartGame').addEventListener('click', () => {
-            this.restartGame();
+        const restartGame = document.getElementById('restartGame');
+        if (restartGame) {
+            restartGame.addEventListener('click', () => {
+                this.restartGame();
+            });
+        }
+
+        // Обработчики для магазина
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.selectShopCategory(e.target.dataset.category);
+            });
         });
     }
 
+    // Мультиплеер функции
+    initMultiplayer() {
+        this.players = [];
+        this.renderPlayersList();
+    }
+
+    addPlayer() {
+        if (this.players.length >= 4) {
+            alert('Максимум 4 игрока!');
+            return;
+        }
+
+        const playerId = this.players.length + 1;
+        const avatar = GameData.avatars[this.players.length % GameData.avatars.length];
+        const color = GameData.playerColors[this.players.length % GameData.playerColors.length];
+        
+        const newPlayer = {
+            id: playerId,
+            name: `Игрок ${playerId}`,
+            avatar: avatar,
+            color: color,
+            skill: '',
+            interest: '',
+            profession: '',
+            stars: 0,
+            position: 0,
+            inventory: [],
+            skills: [],
+            boosters: []
+        };
+
+        this.players.push(newPlayer);
+        this.renderPlayersList();
+        this.updateStartButton();
+    }
+
+    renderPlayersList() {
+        const container = document.getElementById('playersListContainer');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        this.players.forEach((player, index) => {
+            const playerCard = document.createElement('div');
+            playerCard.className = 'player-card';
+            playerCard.innerHTML = `
+                <div class="player-avatar" style="background: ${player.color}">${player.avatar}</div>
+                <div class="player-info">
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-profession">${player.profession || 'Профессия не выбрана'}</div>
+                </div>
+                <div class="player-controls">
+                    <button class="btn-small btn-edit" data-index="${index}">✏️</button>
+                    <button class="btn-small btn-delete" data-index="${index}">🗑️</button>
+                </div>
+            `;
+            container.appendChild(playerCard);
+        });
+
+        // Добавляем обработчики для кнопок редактирования и удаления
+        container.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.editPlayer(index);
+            });
+        });
+
+        container.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.removePlayer(index);
+            });
+        });
+    }
+
+    editPlayer(index) {
+        const player = this.players[index];
+        const newName = prompt('Введите имя игрока:', player.name);
+        if (newName) {
+            player.name = newName;
+            this.renderPlayersList();
+        }
+    }
+
+    removePlayer(index) {
+        this.players.splice(index, 1);
+        this.renderPlayersList();
+        this.updateStartButton();
+    }
+
+    updateStartButton() {
+        const startBtn = document.getElementById('startMultiplayerBtn');
+        if (!startBtn) return;
+
+        const allPlayersReady = this.players.length >= 2;
+        
+        startBtn.disabled = !allPlayersReady;
+    }
+
     createPlayerProfile() {
-        const name = document.getElementById('playerName').value || 'Космонавт';
+        const nameInput = document.getElementById('playerName');
+        const name = nameInput ? nameInput.value || 'Космонавт' : 'Космонавт';
         const skill = document.querySelector('.skill-btn.selected')?.textContent || 'Творчество';
         const interest = document.querySelector('.interest-btn.selected')?.textContent || 'Космос';
         
@@ -140,27 +330,76 @@ class CosmicProfessionGame {
             name: name,
             skill: skill,
             interest: interest,
-            profession: GameData.generateProfession(skill, interest)
+            profession: GameData.generateProfession(skill, interest),
+            stars: 0,
+            position: 0,
+            inventory: [],
+            skills: [],
+            boosters: []
         };
     }
 
-    startGame() {
+    startSingleGame() {
+        this.gameState = {
+            players: [this.player],
+            currentPlayerIndex: 0,
+            planets: GameData.createGameBoard(15),
+            gameStarted: true,
+            diceValue: 0
+        };
+
         this.showScreen('game');
-        this.updatePlayerInfo();
-        this.gameState.gameStarted = true;
+        this.updateGameUI();
+        this.renderGameBoard();
+        this.renderMiniPlayers();
         
         // Проигрываем фоновую музыку
         this.playBackgroundMusic();
     }
 
-    updatePlayerInfo() {
-        document.getElementById('currentPlayerName').textContent = this.player.name;
-        document.getElementById('currentProfession').textContent = this.player.profession;
-        document.getElementById('starCount').textContent = this.gameState.stars;
+    startMultiplayerGame() {
+        // Назначаем случайные профессии игрокам
+        this.players.forEach(player => {
+            if (!player.profession) {
+                const skill = GameData.skills[Math.floor(Math.random() * GameData.skills.length)];
+                const interest = GameData.interests[Math.floor(Math.random() * GameData.interests.length)];
+                player.profession = GameData.generateProfession(skill, interest);
+                player.skill = skill;
+                player.interest = interest;
+            }
+        });
+
+        this.gameState = {
+            players: [...this.players],
+            currentPlayerIndex: 0,
+            planets: GameData.createGameBoard(15),
+            gameStarted: true,
+            diceValue: 0
+        };
+
+        this.showScreen('game');
+        this.updateGameUI();
+        this.renderGameBoard();
+        this.renderMiniPlayers();
+        
+        this.playBackgroundMusic();
+    }
+
+    updateGameUI() {
+        const currentPlayer = this.getCurrentPlayer();
+        const currentPlayerName = document.getElementById('currentPlayerName');
+        const currentProfession = document.getElementById('currentProfession');
+        const starCount = document.getElementById('starCount');
+
+        if (currentPlayerName) currentPlayerName.textContent = currentPlayer.name;
+        if (currentProfession) currentProfession.textContent = currentPlayer.profession;
+        if (starCount) starCount.textContent = currentPlayer.stars;
     }
 
     renderGameBoard() {
         const track = document.getElementById('planetsTrack');
+        if (!track) return;
+
         track.innerHTML = '';
         
         this.gameState.planets.forEach(planet => {
@@ -176,6 +415,8 @@ class CosmicProfessionGame {
             planetElement.appendChild(label);
             track.appendChild(planetElement);
         });
+
+        this.updateRocketPosition();
     }
 
     getPlanetEmoji(type) {
@@ -188,9 +429,147 @@ class CosmicProfessionGame {
         return emojis[type] || '🌍';
     }
 
+    renderMiniPlayers() {
+        const container = document.getElementById('playersMini');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        this.gameState.players.forEach((player, index) => {
+            const isActive = index === this.gameState.currentPlayerIndex;
+            const card = document.createElement('div');
+            card.className = `player-mini-card ${isActive ? 'active' : ''}`;
+            card.innerHTML = `
+                <div class="player-mini-avatar" style="background: ${player.color || '#3b82f6'}">${player.avatar || '👤'}</div>
+                <div class="player-mini-info">
+                    <div class="player-mini-name">${player.name}</div>
+                    <div class="player-mini-stars">⭐ ${player.stars}</div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Функции магазина
+    openShop() {
+        this.showScreen('shop');
+        this.updateShopBalance();
+        this.selectShopCategory('skills');
+    }
+
+    selectShopCategory(category) {
+        // Обновляем активную кнопку категории
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        const categoryBtn = document.querySelector(`[data-category="${category}"]`);
+        if (categoryBtn) {
+            categoryBtn.classList.add('active');
+        }
+
+        // Показываем товары категории
+        this.renderShopItems(category);
+    }
+
+    renderShopItems(category) {
+        const container = document.getElementById('shopItems');
+        if (!container) return;
+
+        const items = GameData.shopItems[category];
+        const currentPlayer = this.getCurrentPlayer();
+
+        container.innerHTML = '';
+
+        items.forEach(item => {
+            const owned = currentPlayer.skills.includes(item.id) || 
+                         currentPlayer.inventory.some(inv => inv.id === item.id);
+            const canAfford = currentPlayer.stars >= item.price;
+            
+            const itemElement = document.createElement('div');
+            itemElement.className = `shop-item ${owned ? 'owned' : ''} ${!canAfford && !owned ? 'cannot-afford' : ''}`;
+            itemElement.innerHTML = `
+                <div class="item-icon">${item.icon}</div>
+                <div class="item-name">${item.name}</div>
+                <div class="item-description">${item.description}</div>
+                <div class="item-price">
+                    <span class="price">${item.price} ⭐</span>
+                    <button class="btn-buy ${owned ? 'owned' : ''}" 
+                            data-item-id="${item.id}" 
+                            data-category="${category}"
+                            ${owned || !canAfford ? 'disabled' : ''}>
+                        ${owned ? 'Куплено' : 'Купить'}
+                    </button>
+                </div>
+            `;
+            container.appendChild(itemElement);
+        });
+
+        // Добавляем обработчики для кнопок покупки
+        container.querySelectorAll('.btn-buy').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const itemId = e.target.dataset.itemId;
+                const category = e.target.dataset.category;
+                this.buyItem(itemId, category);
+            });
+        });
+    }
+
+    buyItem(itemId, category) {
+        const currentPlayer = this.getCurrentPlayer();
+        const item = GameData.shopItems[category].find(i => i.id === itemId);
+
+        if (!item) return;
+
+        if (currentPlayer.stars >= item.price) {
+            currentPlayer.stars -= item.price;
+
+            if (item.type === 'skill') {
+                currentPlayer.skills.push(itemId);
+            } else if (item.type === 'item') {
+                currentPlayer.inventory.push({
+                    id: itemId,
+                    ...item
+                });
+            } else if (item.type === 'booster') {
+                currentPlayer.boosters.push({
+                    id: itemId,
+                    ...item,
+                    remainingTurns: item.duration
+                });
+            }
+
+            this.updateShopBalance();
+            this.renderShopItems(category);
+            this.showPurchaseSuccess(item.name);
+        }
+    }
+
+    updateShopBalance() {
+        const currentPlayer = this.getCurrentPlayer();
+        const shopBalance = document.getElementById('shopBalance');
+        if (shopBalance) {
+            shopBalance.textContent = currentPlayer.stars;
+        }
+    }
+
+    getCurrentPlayer() {
+        if (this.gameMode === 'single') {
+            return this.player;
+        } else {
+            return this.gameState.players[this.gameState.currentPlayerIndex];
+        }
+    }
+
+    showPurchaseSuccess(itemName) {
+        alert(`Поздравляем! Вы купили "${itemName}"!`);
+    }
+
+    // Игровые функции
     rollDice() {
         const diceBtn = document.getElementById('rollDiceBtn');
         const diceResult = document.getElementById('diceResult');
+        
+        if (!diceBtn || !diceResult) return;
         
         // Блокируем кнопку на время анимации
         diceBtn.disabled = true;
@@ -205,42 +584,58 @@ class CosmicProfessionGame {
             
             if (rolls >= maxRolls) {
                 clearInterval(rollInterval);
-                const finalValue = Math.floor(Math.random() * 6) + 1;
-                this.gameState.diceValue = finalValue;
-                diceResult.textContent = finalValue;
+                let finalValue = Math.floor(Math.random() * 6) + 1;
                 
-                // Проигрываем звук
+                // Проверяем улучшения игрока
+                const currentPlayer = this.getCurrentPlayer();
+                if (currentPlayer.skills.includes('extra_dice')) {
+                    const secondValue = Math.floor(Math.random() * 6) + 1;
+                    finalValue = Math.max(finalValue, secondValue);
+                    diceResult.textContent = `${finalValue} (из ${finalValue},${secondValue})`;
+                }
+                
+                if (currentPlayer.boosters.some(b => b.id === 'lucky_charm')) {
+                    // Увеличиваем шанс выпадения 6
+                    if (Math.random() < 0.3) {
+                        finalValue = 6;
+                        diceResult.textContent = `${finalValue} 🍀`;
+                    }
+                }
+                
+                this.gameState.diceValue = finalValue;
                 this.playSound('diceSound');
                 
-                // Перемещаем игрока
                 setTimeout(() => this.movePlayer(), 1000);
             }
         }, 100);
     }
 
     movePlayer() {
-        const newPosition = this.gameState.currentPosition + this.gameState.diceValue;
+        const currentPlayer = this.getCurrentPlayer();
+        const newPosition = currentPlayer.position + this.gameState.diceValue;
         const maxPosition = this.gameState.planets.length;
-        
+
         if (newPosition >= maxPosition) {
-            this.gameState.currentPosition = maxPosition - 1;
-            this.completeGame();
+            currentPlayer.position = maxPosition - 1;
+            this.checkWinCondition();
         } else {
-            this.gameState.currentPosition = newPosition;
+            currentPlayer.position = newPosition;
             this.updateRocketPosition();
-            
-            // Активируем планету
             setTimeout(() => this.activatePlanet(), 1000);
         }
     }
 
     updateRocketPosition() {
+        const currentPlayer = this.getCurrentPlayer();
         const rocket = document.getElementById('playerRocket');
         const track = document.getElementById('planetsTrack');
+        
+        if (!rocket || !track) return;
+        
         const planets = track.querySelectorAll('.planet');
         
-        if (planets[this.gameState.currentPosition]) {
-            const planetRect = planets[this.gameState.currentPosition].getBoundingClientRect();
+        if (planets[currentPlayer.position]) {
+            const planetRect = planets[currentPlayer.position].getBoundingClientRect();
             const trackRect = track.getBoundingClientRect();
             
             const position = planetRect.left - trackRect.left + planetRect.width / 2;
@@ -249,7 +644,8 @@ class CosmicProfessionGame {
     }
 
     activatePlanet() {
-        const currentPlanet = this.gameState.planets[this.gameState.currentPosition];
+        const currentPlayer = this.getCurrentPlayer();
+        const currentPlanet = this.gameState.planets[currentPlayer.position];
         this.gameState.currentPlanet = currentPlanet;
         
         this.showMissionScreen(currentPlanet);
@@ -259,9 +655,13 @@ class CosmicProfessionGame {
         this.showScreen('mission');
         
         // Обновляем информацию о планете
-        document.getElementById('missionPlanetName').textContent = planet.name;
-        document.getElementById('missionPlanetIcon').textContent = this.getPlanetEmoji(planet.type);
-        document.getElementById('missionProfession').textContent = this.player.profession;
+        const missionPlanetName = document.getElementById('missionPlanetName');
+        const missionPlanetIcon = document.getElementById('missionPlanetIcon');
+        const missionProfession = document.getElementById('missionProfession');
+        
+        if (missionPlanetName) missionPlanetName.textContent = planet.name;
+        if (missionPlanetIcon) missionPlanetIcon.textContent = this.getPlanetEmoji(planet.type);
+        if (missionProfession) missionProfession.textContent = this.getCurrentPlayer().profession;
         
         // Настраиваем задание в зависимости от типа планеты
         this.setupMission(planet.type);
@@ -274,17 +674,19 @@ class CosmicProfessionGame {
         const convincePlayers = document.getElementById('convincePlayers');
         const helpOthers = document.getElementById('helpOthers');
         
+        if (!missionType || !missionText) return;
+        
         // Скрываем все типы заданий
-        missionInput.style.display = 'none';
-        convincePlayers.style.display = 'none';
-        helpOthers.style.display = 'none';
+        if (missionInput) missionInput.style.display = 'none';
+        if (convincePlayers) convincePlayers.style.display = 'none';
+        if (helpOthers) helpOthers.style.display = 'none';
         
         switch(planetType) {
             case 'blue': // Космическая задача
                 missionType.textContent = 'Космическая задача';
                 missionType.style.background = 'rgba(59, 130, 246, 0.3)';
                 missionText.textContent = GameData.getRandomProblem();
-                missionInput.style.display = 'block';
+                if (missionInput) missionInput.style.display = 'block';
                 this.startTimer(120); // 2 минуты
                 break;
                 
@@ -292,7 +694,7 @@ class CosmicProfessionGame {
                 missionType.textContent = 'Доказательство полезности';
                 missionType.style.background = 'rgba(239, 68, 68, 0.3)';
                 missionText.textContent = 'Объясни, почему твоя профессия полезна для космонавтов!';
-                convincePlayers.style.display = 'block';
+                if (convincePlayers) convincePlayers.style.display = 'block';
                 this.setupPlayersList();
                 break;
                 
@@ -300,7 +702,7 @@ class CosmicProfessionGame {
                 missionType.textContent = 'Помощь другим';
                 missionType.style.background = 'rgba(16, 185, 129, 0.3)';
                 missionText.textContent = 'Помоги другому игроку с его заданием!';
-                helpOthers.style.display = 'block';
+                if (helpOthers) helpOthers.style.display = 'block';
                 this.setupHelpPlayers();
                 break;
                 
@@ -316,6 +718,8 @@ class CosmicProfessionGame {
 
     startTimer(seconds) {
         const timerElement = document.getElementById('missionTimer');
+        if (!timerElement) return;
+
         let timeLeft = seconds;
         
         const timer = setInterval(() => {
@@ -337,6 +741,8 @@ class CosmicProfessionGame {
     setupPlayersList() {
         // В реальной игре здесь был бы список других игроков
         const playersList = document.getElementById('playersList');
+        if (!playersList) return;
+
         playersList.innerHTML = `
             <div class="player-item">👨‍🚀 Космонавт Алексей</div>
             <div class="player-item">👩‍🚀 Космонавт Мария</div>
@@ -347,6 +753,8 @@ class CosmicProfessionGame {
     setupHelpPlayers() {
         // В реальной игре здесь был бы список игроков, которым нужна помощь
         const select = document.getElementById('playerToHelp');
+        if (!select) return;
+
         select.innerHTML = `
             <option value="1">👨‍🚀 Космонавт Алексей - "Сломался компьютер"</option>
             <option value="2">👩‍🚀 Космонавт Мария - "Грустные инопланетяне"</option>
@@ -371,7 +779,8 @@ class CosmicProfessionGame {
                         message = 'Ты пропускаешь ход, но придумал новое применение своей профессии! +1 звезда';
                         starsEarned = 1;
                     } else if (event.effect.includes('Откат')) {
-                        this.gameState.currentPosition = Math.max(0, this.gameState.currentPosition - 2);
+                        const currentPlayer = this.getCurrentPlayer();
+                        currentPlayer.position = Math.max(0, currentPlayer.position - 2);
                         this.updateRocketPosition();
                         message = 'Космический ветер отбросил тебя на 2 планеты назад!';
                     }
@@ -379,26 +788,30 @@ class CosmicProfessionGame {
             }
             
             if (starsEarned > 0) {
-                this.gameState.stars += starsEarned;
+                const currentPlayer = this.getCurrentPlayer();
+                currentPlayer.stars += starsEarned;
                 this.showResult(starsEarned, message);
             } else {
-                this.continueGame();
+                this.nextPlayer();
             }
         }, 3000);
     }
 
     submitSolution() {
-        const solution = document.getElementById('solutionInput').value;
+        const solutionInput = document.getElementById('solutionInput');
+        const solution = solutionInput ? solutionInput.value : '';
+        
         if (!solution.trim()) {
             alert('Опиши своё решение!');
             return;
         }
         
-        // Оцениваем решение (в реальной игре была бы система оценки)
+        // Оцениваем решение
         const starsEarned = this.evaluateSolution(solution);
         const message = this.getFeedback(starsEarned);
         
-        this.gameState.stars += starsEarned;
+        const currentPlayer = this.getCurrentPlayer();
+        currentPlayer.stars += starsEarned;
         this.showResult(starsEarned, message);
     }
 
@@ -406,13 +819,16 @@ class CosmicProfessionGame {
         const starsEarned = 2; // За презентацию всегда 2 звезды
         const message = 'Ты убедительно доказал полезность своей профессии!';
         
-        this.gameState.stars += starsEarned;
+        const currentPlayer = this.getCurrentPlayer();
+        currentPlayer.stars += starsEarned;
         this.showResult(starsEarned, message);
     }
 
     submitHelp() {
-        const helpText = document.getElementById('helpText').value;
-        if (!helpText.trim()) {
+        const helpText = document.getElementById('helpText');
+        const text = helpText ? helpText.value : '';
+        
+        if (!text.trim()) {
             alert('Опиши, чем ты можешь помочь!');
             return;
         }
@@ -420,7 +836,8 @@ class CosmicProfessionGame {
         const starsEarned = 1; // За помощь всегда 1 звезда
         const message = 'Спасибо за помощь другому космонавту!';
         
-        this.gameState.stars += starsEarned;
+        const currentPlayer = this.getCurrentPlayer();
+        currentPlayer.stars += starsEarned;
         this.showResult(starsEarned, message);
     }
 
@@ -429,7 +846,19 @@ class CosmicProfessionGame {
         const lengthScore = Math.min(solution.length / 50, 2); // Макс 2 звезды за длину
         const complexityBonus = solution.includes('!') || solution.includes('?') ? 0.5 : 0;
         
-        return Math.min(Math.floor(lengthScore + complexityBonus), 3);
+        let baseStars = Math.min(Math.floor(lengthScore + complexityBonus), 3);
+        
+        // Применяем бустеры
+        const currentPlayer = this.getCurrentPlayer();
+        if (currentPlayer.boosters.some(b => b.id === 'double_stars')) {
+            baseStars *= 2;
+        }
+
+        if (currentPlayer.boosters.some(b => b.id === 'inspiration')) {
+            baseStars += 1;
+        }
+
+        return Math.min(baseStars, 3); // Максимум 3 звезды
     }
 
     getFeedback(stars) {
@@ -444,48 +873,81 @@ class CosmicProfessionGame {
     showResult(starsEarned, message) {
         this.showScreen('result');
         
-        document.getElementById('resultIcon').textContent = '⭐'.repeat(Math.min(starsEarned, 3));
-        document.getElementById('resultTitle').textContent = starsEarned > 0 ? 'Успех!' : 'Событие';
-        document.getElementById('resultText').textContent = message;
-        document.getElementById('starsEarned').textContent = starsEarned > 0 ? `+${starsEarned} ⭐` : '';
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+        const starsEarnedElement = document.getElementById('starsEarned');
+        
+        if (resultIcon) resultIcon.textContent = '⭐'.repeat(Math.min(starsEarned, 3));
+        if (resultTitle) resultTitle.textContent = starsEarned > 0 ? 'Успех!' : 'Событие';
+        if (resultText) resultText.textContent = message;
+        if (starsEarnedElement) starsEarnedElement.textContent = starsEarned > 0 ? `+${starsEarned} ⭐` : '';
         
         // Обновляем счетчик звезд
-        this.updatePlayerInfo();
-        
-        // Проверяем победу
-        if (this.gameState.stars >= 10) {
-            setTimeout(() => this.completeGame(), 2000);
-        }
+        this.updateGameUI();
+        this.renderMiniPlayers();
     }
 
     continueGame() {
         // Разблокируем кнопку броска кубика
-        document.getElementById('rollDiceBtn').disabled = false;
+        const rollDiceBtn = document.getElementById('rollDiceBtn');
+        if (rollDiceBtn) rollDiceBtn.disabled = false;
+        
+        this.nextPlayer();
+    }
+
+    nextPlayer() {
+        if (this.gameMode === 'multiplayer') {
+            this.gameState.currentPlayerIndex = 
+                (this.gameState.currentPlayerIndex + 1) % this.gameState.players.length;
+            
+            this.updateGameUI();
+            this.renderMiniPlayers();
+            
+            // Обновляем бустеры
+            this.updateBoosters();
+        }
+        
         this.showScreen('game');
     }
 
-    completeGame() {
+    updateBoosters() {
+        const currentPlayer = this.getCurrentPlayer();
+        
+        currentPlayer.boosters = currentPlayer.boosters.filter(booster => {
+            booster.remainingTurns--;
+            return booster.remainingTurns > 0;
+        });
+    }
+
+    checkWinCondition() {
+        const currentPlayer = this.getCurrentPlayer();
+        
+        if (currentPlayer.stars >= 10) {
+            this.showWinScreen(currentPlayer);
+        } else {
+            this.nextPlayer();
+        }
+    }
+
+    showWinScreen(winner) {
         this.playSound('winSound');
         this.showScreen('win');
         
-        document.getElementById('winnerName').textContent = this.player.name;
-        document.getElementById('winnerProfession').textContent = this.player.profession;
+        const winnerName = document.getElementById('winnerName');
+        const winnerProfession = document.getElementById('winnerProfession');
+        
+        if (winnerName) winnerName.textContent = winner.name;
+        if (winnerProfession) winnerProfession.textContent = winner.profession;
     }
 
     restartGame() {
-        this.gameState = {
-            currentPosition: 0,
-            stars: 0,
-            planets: GameData.createGameBoard(15),
-            currentPlanet: null,
-            diceValue: 0,
-            gameStarted: true
-        };
-        
-        this.renderGameBoard();
-        this.updatePlayerInfo();
-        this.updateRocketPosition();
-        this.showScreen('game');
+        if (this.gameMode === 'single') {
+            this.showScreen('profile');
+        } else {
+            this.showScreen('players');
+            this.initMultiplayer();
+        }
     }
 
     showScreen(screenName) {
@@ -495,7 +957,10 @@ class CosmicProfessionGame {
         });
         
         // Показываем нужный экран
-        document.getElementById(screenName + 'Screen').classList.add('active');
+        const screenElement = document.getElementById(screenName + 'Screen');
+        if (screenElement) {
+            screenElement.classList.add('active');
+        }
         this.currentScreen = screenName;
     }
 
@@ -518,6 +983,6 @@ class CosmicProfessionGame {
 
 // Запуск игры при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎮 Запускаем космическую игру...');
+    console.log('🎮 Запускаем космическую игру с мультиплеером...');
     window.game = new CosmicProfessionGame();
 });

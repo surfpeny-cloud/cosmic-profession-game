@@ -3,174 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Путешествие к Планете Профессий</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>ПУТЕШЕСТВИЕ К ПЛАНЕТЕ ПРОФЕССИЙ</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <!-- Фон с звездами -->
-    <div class="stars-background">
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-    </div>
-
-    <div id="app">
+    <div id="gameContainer">
         <!-- Экран загрузки -->
         <div id="loadingScreen" class="screen active">
-            <div class="loading-container">
-                <div class="cosmic-loader">
-                    <div class="planet-loader">
-                        <div class="ring"></div>
-                        <div class="ring"></div>
-                        <div class="ring"></div>
-                        <div class="central-core">🌌</div>
-                    </div>
+            <div class="loading-content">
+                <div class="planet-loader">
+                    <div class="orbit"></div>
+                    <div class="rocket">🚀</div>
                 </div>
-                <h2 class="loading-title">Запускаем космический двигатель...</h2>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="progress-text">0%</div>
+                <h1>Запускаем космический корабль...</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Экран создания персонажа -->
-        <div id="characterScreen" class="screen">
+        <!-- Экран создания профиля -->
+        <div id="profileScreen" class="screen">
             <div class="screen-content">
-                <div class="header-section">
-                    <div class="title-icon">🚀</div>
-                    <h1>Создание Космического Специалиста</h1>
-                    <p class="subtitle">Стань первым в своей уникальной профессии будущего!</p>
-                </div>
+                <h1>СОЗДАЙ СВОЕГО КОСМИЧЕСКОГО СПЕЦИАЛИСТА</h1>
                 
-                <div class="character-form">
-                    <div class="input-group floating-input">
-                        <input type="text" id="playerName" placeholder=" ">
-                        <label>Имя космонавта</label>
-                        <div class="input-icon">👨‍🚀</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">🎯 Главный навык</label>
-                        <select id="mainSkill" class="modern-select">
-                            <option value="">Выберите ваш навык</option>
-                            <option value="рисование">🎨 Рисование</option>
-                            <option value="программирование">💻 Программирование</option>
-                            <option value="помощь другим">🤝 Помощь другим</option>
-                            <option value="исследования">🔬 Исследования</option>
-                            <option value="творчество">✨ Творчество</option>
-                            <option value="организация">📊 Организация</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">🌌 Сфера интересов</label>
-                        <select id="interestArea" class="modern-select">
-                            <option value="">Выберите сферу</option>
-                            <option value="животные">🐾 Животные</option>
-                            <option value="технологии">🤖 Технологии</option>
-                            <option value="искусство">🎭 Искусство</option>
-                            <option value="природа">🌿 Природа</option>
-                            <option value="космос">🚀 Космос</option>
-                            <option value="музыка">🎵 Музыка</option>
-                        </select>
-                    </div>
-                    
-                    <button id="generateProfession" class="btn btn-primary cosmic-btn">
-                        <span class="btn-icon">🎲</span>
-                        Сгенерировать профессию
-                    </button>
-                    
-                    <div id="professionResult" class="profession-result">
-                        <div class="result-header">
-                            <div class="result-icon">⭐</div>
-                            <h3>Ваша космическая профессия</h3>
-                        </div>
-                        <div id="professionName" class="profession-name"></div>
-                        <div id="professionDescription" class="profession-desc"></div>
-                        <div class="profession-stats">
-                            <div class="stat">
-                                <span class="stat-icon">🎯</span>
-                                <span id="professionSkill"></span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-icon">🌌</span>
-                                <span id="professionInterest"></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button id="startGame" class="btn btn-success cosmic-btn" disabled>
-                        <span class="btn-icon">🚀</span>
-                        Начать космическое путешествие!
-                    </button>
+                <div class="form-section">
+                    <label>Имя космонавта:</label>
+                    <input type="text" id="playerName" placeholder="Введи своё имя" maxlength="20">
                 </div>
+
+                <div class="form-section">
+                    <label>Выбери свою самую сильную сторону:</label>
+                    <div class="skills-grid" id="skillsContainer">
+                        <!-- Навыки будут добавлены через JS -->
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <label>Что тебе интересно?</label>
+                    <div class="interests-grid" id="interestsContainer">
+                        <!-- Интересы будут добавлены через JS -->
+                    </div>
+                </div>
+
+                <div class="profession-preview">
+                    <h3>Твоя профессия:</h3>
+                    <div id="professionDisplay" class="profession-name">Космический ...</div>
+                </div>
+
+                <button id="startGameBtn" class="btn-primary" disabled>СТАРТОВАТЬ!</button>
             </div>
         </div>
 
-        <!-- Основной игровой экран -->
+        <!-- Игровое поле -->
         <div id="gameScreen" class="screen">
             <div class="game-header">
-                <div class="player-card">
-                    <div class="player-avatar">👨‍🚀</div>
-                    <div class="player-info">
-                        <div class="player-name" id="currentPlayerName"></div>
-                        <div class="player-profession" id="currentProfession"></div>
-                    </div>
+                <div class="player-info">
+                    <span id="currentPlayerName"></span>
+                    <div class="profession-badge" id="currentProfession"></div>
                 </div>
-                <div class="stars-display">
-                    <div class="stars-count">⭐ <span id="starsCount">0</span>/10</div>
-                    <div class="progress-ring">
-                        <svg width="50" height="50">
-                            <circle cx="25" cy="25" r="20" stroke="#333" stroke-width="3" fill="none"></circle>
-                            <circle id="progressCircle" cx="25" cy="25" r="20" stroke="#ffd93d" stroke-width="3" 
-                                    fill="none" stroke-dasharray="125.6" stroke-dashoffset="125.6" transform="rotate(-90 25 25)"></circle>
-                        </svg>
-                    </div>
+                <div class="stars-info">
+                    ⭐ <span id="starCount">0</span>/10
                 </div>
             </div>
-            
-            <div class="game-map-container">
-                <div class="map-title">Космический путь к Планете Профессий</div>
-                <div class="game-map">
-                    <div class="map-path"></div>
-                    <div class="planets-container" id="planetsContainer">
-                        <!-- Планеты генерируются через JavaScript -->
-                    </div>
-                    <div class="player-marker" id="playerMarker">
-                        <div class="rocket">🚀</div>
-                        <div class="marker-glow"></div>
-                    </div>
+
+            <div class="game-board">
+                <div class="space-background">
+                    <div class="stars"></div>
+                    <div class="nebula"></div>
+                </div>
+                
+                <div class="planets-track" id="planetsTrack">
+                    <!-- Планеты будут добавлены через JS -->
+                </div>
+
+                <div class="player-rocket" id="playerRocket">
+                    <div class="rocket">🚀</div>
+                    <div class rocket-trail></div>
+                </div>
+
+                <div class="destination-planet">
+                    <div class="planet final" data-type="final">🎯</div>
+                    <div class="planet-label">Планета Профессий</div>
                 </div>
             </div>
-            
+
             <div class="game-controls">
-                <button id="rollDice" class="btn-dice">
-                    <div class="dice-icon">🎲</div>
-                    <span>Бросить космический кубик</span>
-                </button>
+                <button id="rollDiceBtn" class="btn-dice">🎲 БРОСИТЬ КУБИК</button>
                 <div class="dice-result" id="diceResult"></div>
-            </div>
-            
-            <div class="game-log">
-                <div class="log-header">
-                    <h3>📡 Журнал космического полета</h3>
-                    <div class="log-actions">
-                        <button class="btn-clear" id="clearLog">Очистить</button>
-                    </div>
-                </div>
-                <div class="log-messages" id="logMessages"></div>
             </div>
         </div>
 
@@ -178,134 +99,87 @@
         <div id="missionScreen" class="screen">
             <div class="screen-content">
                 <div class="planet-header">
-                    <div class="planet-glow"></div>
-                    <div class="planet-icon" id="missionPlanetIcon">🪐</div>
+                    <div class="planet-icon" id="missionPlanetIcon">🌍</div>
                     <h2 id="missionPlanetName">Планета</h2>
-                    <div class="planet-type" id="missionPlanetType"></div>
                 </div>
-                
+
                 <div class="mission-content">
-                    <div class="mission-type-badge" id="missionTypeBadge">
-                        <span id="missionTypeIcon">🌌</span>
-                        <span id="missionTypeText">Задание</span>
-                    </div>
+                    <div class="mission-type" id="missionType"></div>
+                    <div class="mission-text" id="missionText"></div>
                     
-                    <div class="mission-card">
-                        <div class="mission-text" id="missionText"></div>
-                        <div class="profession-hint">
-                            <div class="hint-icon">💡</div>
-                            <div class="hint-text">
-                                <strong>Ваша профессия:</strong> 
-                                <span id="missionProfession"></span>
-                            </div>
-                        </div>
+                    <div class="profession-context">
+                        <strong>Твоя профессия:</strong>
+                        <span id="missionProfession"></span>
                     </div>
-                    
-                    <div class="mission-timer">
-                        <div class="timer-container">
-                            <div class="timer-icon">⏰</div>
-                            <div class="timer-display" id="missionTimer">02:00</div>
-                            <div class="timer-progress">
-                                <div class="timer-fill" id="timerFill"></div>
-                            </div>
-                        </div>
+
+                    <div class="timer" id="missionTimer">02:00</div>
+
+                    <!-- Для разных типов заданий -->
+                    <div class="mission-input" id="missionInput">
+                        <textarea placeholder="Опиши своё решение..." id="solutionInput"></textarea>
+                        <button id="submitSolution" class="btn-primary">Отправить решение</button>
                     </div>
-                </div>
-                
-                <div class="mission-actions">
-                    <button id="completeMission" class="btn btn-primary mission-btn">
-                        <span class="btn-icon">✅</span>
-                        Выполнить задание
-                    </button>
-                    <button id="creativeSolution" class="btn btn-creative mission-btn">
-                        <span class="btn-icon">✨</span>
-                        Креативное решение
-                    </button>
-                </div>
-                
-                <div class="solution-input" id="solutionInput">
-                    <div class="solution-header">
-                        <h4>📝 Ваше решение</h4>
-                        <div class="solution-type" id="solutionType"></div>
+
+                    <div class="convince-players" id="convincePlayers" style="display: none;">
+                        <div class="players-list" id="playersList"></div>
+                        <button id="startPresentation" class="btn-primary">Начать презентацию</button>
                     </div>
-                    <textarea id="solutionText" placeholder="Опишите, как ваша профессия поможет решить эту космическую проблему..."></textarea>
-                    <div class="solution-actions">
-                        <button id="submitSolution" class="btn btn-success">
-                            <span class="btn-icon">🚀</span>
-                            Отправить решение
-                        </button>
-                        <button id="cancelSolution" class="btn btn-secondary">Отмена</button>
+
+                    <div class="help-others" id="helpOthers" style="display: none;">
+                        <select id="playerToHelp">
+                            <!-- Список игроков -->
+                        </select>
+                        <textarea placeholder="Чем ты можешь помочь?" id="helpText"></textarea>
+                        <button id="submitHelp" class="btn-primary">Помочь</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Экран результата -->
+        <div id="resultScreen" class="screen">
+            <div class="screen-content">
+                <div class="result-icon" id="resultIcon">⭐</div>
+                <h2 id="resultTitle">Результат</h2>
+                <div class="result-text" id="resultText"></div>
+                <div class="stars-earned" id="starsEarned"></div>
+                <button id="continueBtn" class="btn-primary">Продолжить</button>
             </div>
         </div>
 
         <!-- Экран победы -->
-        <div id="victoryScreen" class="screen">
-            <div class="victory-container">
-                <div class="victory-animation">
+        <div id="winScreen" class="screen">
+            <div class="screen-content">
+                <div class="celebration">
                     <div class="confetti"></div>
                     <div class="confetti"></div>
                     <div class="confetti"></div>
-                    <div class="confetti"></div>
-                    <div class="confetti"></div>
-                    <div class="victory-planet">🏆</div>
-                    <div class="victory-glow"></div>
                 </div>
-                
-                <div class="victory-content">
-                    <h1 class="victory-title">Поздравляем!</h1>
-                    <h2 class="victory-subtitle">Вы достигли Планеты Профессий!</h2>
-                    
-                    <div class="victory-card">
-                        <div class="victory-stat">
-                            <div class="stat-icon">👨‍🚀</div>
-                            <div class="stat-info">
-                                <div class="stat-label">Космический специалист</div>
-                                <div class="stat-value" id="victoryProfession"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="victory-stat">
-                            <div class="stat-icon">⭐</div>
-                            <div class="stat-info">
-                                <div class="stat-label">Звезд собрано</div>
-                                <div class="stat-value" id="victoryStars">10</div>
-                            </div>
-                        </div>
-                        
-                        <div class="victory-stat">
-                            <div class="stat-icon">⏱️</div>
-                            <div class="stat-info">
-                                <div class="stat-label">Время полета</div>
-                                <div class="stat-value" id="victoryTime">00:00</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="victory-message">
-                        <p>Теперь вы официально признаны экспертом в своей уникальной профессии будущего!</p>
-                    </div>
-                    
-                    <button id="restartGame" class="btn btn-success victory-btn">
-                        <span class="btn-icon">🔄</span>
-                        Начать новое путешествие
-                    </button>
+                <h1>🎉 ПОБЕДА! 🎉</h1>
+                <div class="winner-info">
+                    <div class="winner-name" id="winnerName"></div>
+                    <div class="winner-profession" id="winnerProfession"></div>
                 </div>
+                <div class="victory-message">
+                    Ты достиг Планеты Профессий и стал первым специалистом в своей области!
+                </div>
+                <button id="restartGame" class="btn-primary">Играть снова</button>
             </div>
         </div>
-    </div>
 
-    <!-- Уведомления -->
-    <div id="notification" class="notification hidden">
-        <div class="notification-content">
-            <span class="notification-icon"></span>
-            <span class="notification-text"></span>
-        </div>
+        <!-- Аудио элементы -->
+        <audio id backgroundMusic loop>
+            <source src="https://assets.mixkit.co/music/preview/mixkit-space-game-668.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="diceSound">
+            <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="winSound">
+            <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+        </audio>
     </div>
 
     <script src="data.js"></script>
     <script src="game.js"></script>
-    <script src="animations.js"></script>
 </body>
 </html>

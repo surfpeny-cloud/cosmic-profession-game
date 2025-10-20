@@ -16,28 +16,28 @@ const PLANET_TYPES = {
         emoji: "🔵",
         description: "Космические задачи",
         color: "blue",
-        frequency: 0.4  // 40%
+        frequency: 0.4
     },
     red: {
         name: "Красная планета", 
         emoji: "🔴",
         description: "Доказательство полезности",
         color: "red",
-        frequency: 0.3  // 30%
+        frequency: 0.3
     },
     green: {
         name: "Зеленая планета",
         emoji: "🟢", 
         description: "Помощь другим",
         color: "green",
-        frequency: 0.2  // 20%
+        frequency: 0.2
     },
     yellow: {
         name: "Желтая планета",
         emoji: "🟡",
         description: "Космические события", 
         color: "yellow",
-        frequency: 0.1  // 10%
+        frequency: 0.1
     }
 };
 

@@ -208,3 +208,13 @@ function getRandomProofTemplate(profession) {
 function getRandomHelpMessage() {
     return GAME_DATA.helpMessages[Math.floor(Math.random() * GAME_DATA.helpMessages.length)];
 }
+// Генератор случайных профессий (исправленная версия)
+function generateProfession(skill, interest) {
+    const prefixes = ["Космический", "Звездный", "Галактический", "Планетарный", "Межгалактический", "Орбитальный"];
+    const suffixes = ["исследователь", "создатель", "художник", "инженер", "врач", "садовник", "архитектор", "повар"];
+    
+    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+    
+    return `${randomPrefix} ${randomSuffix} ${interest.toLowerCase()}`;
+}

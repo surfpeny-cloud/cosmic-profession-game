@@ -1,38 +1,54 @@
-// Основной класс игры
-class SpaceProfessionGame {
+// Главный класс игры
+class CosmicProfessionGame {
     constructor() {
+        this.player = null;
+        this.gameBoard = [];
+        this.currentScreen = 'loading';
+        this.isDiceRolling = false;
+        this.timerInterval = null;
+        this.timeLeft = GAME_CONFIG.timerDuration;
+        this.convincedAliens = new Set();
+        
+        this.init();
+    }
+
+    async init() {
+        try {
+            console.log('🚀 Инициализация космической игры...');
+            await this.initializeGame();
+            this.setupEventListeners();
+            this.showLoadingScreen();
+        } catch (error) {
+            console.error('Ошибка инициализации:', error);
+            this.handleInitError();
+        }
+    }
+
+    async initializeGame() {
+        // Инициализация Telegram Web App
+        this.initializeTelegramWebApp();
+        
+        // Генерация игрового поля
+        this.gameBoard = generateGameBoard();
+        
+        // Инициализация игрока
         this.player = {
-            name: 'Космонавт',
+            name: 'Космический Исследователь',
             profession: '',
             skill: '',
             interest: '',
             stars: 0,
             position: 0,
-            avatar: '🚀'
+            avatar: '👨‍🚀',
+            hasVisited: new Set()
         };
         
-        this.gameBoard = [];
-        this.currentScreen = 'loading';
-        this.isDiceRolling = false;
-        this.timerInterval = null;
-        this.timeLeft = 120;
-        
-        this.init();
+        console.log('✅ Игра инициализирована');
     }
 
-    init() {
-        console.log('Инициализация игры...');
-        this.initializeTelegramWebApp();
-        this.generateGameBoard();
-        this.setupEventListeners();
-        this.showLoadingScreen();
-    }
-
-    // Инициализация Telegram Web App
     initializeTelegramWebApp() {
-        console.log('Инициализация Telegram Web App...');
-        try {
-            if (window.Telegram && Telegram.WebApp) {
+        if (window.Telegram && Telegram.WebApp) {
+            try {
                 Telegram.WebApp.ready();
                 Telegram.WebApp.expand();
                 
@@ -40,20 +56,12 @@ class SpaceProfessionGame {
                 if (user) {
                     this.player.name = user.first_name || 'Космонавт';
                     this.player.avatar = this.getAvatarEmoji(user.id);
-                    console.log('Пользователь Telegram:', this.player.name);
-                } else {
-                    console.log('Данные пользователя Telegram не доступны, используем стандартные');
                 }
-            } else {
-                console.log('Telegram Web App не обнаружен, работаем в браузере');
-                // Тестовые данные для браузера
-                this.player.name = 'Тестовый Космонавт';
-                this.player.avatar = '👨‍🚀';
+                
+                console.log('✅ Telegram Web App инициализирован');
+            } catch (error) {
+                console.warn('⚠️ Telegram Web App не доступен, используем браузерный режим');
             }
-        } catch (error) {
-            console.error('Ошибка инициализации Telegram:', error);
-            this.player.name = 'Космонавт';
-            this.player.avatar = '🚀';
         }
     }
 
@@ -62,230 +70,206 @@ class SpaceProfessionGame {
         return emojis[Math.abs(userId) % emojis.length] || '🚀';
     }
 
-    // Генерация игрового поля
-    generateGameBoard() {
-        console.log('Генерация игрового поля...');
-        this.gameBoard = generateGameBoard(15);
-        console.log('Игровое поле создано:', this.gameBoard.length, 'планет');
-    }
-
-    // Настройка обработчиков событий
     setupEventListeners() {
-        console.log('Настройка обработчиков событий...');
-        
         // Кнопка броска кубика
-        const rollDiceBtn = document.getElementById('rollDiceBtn');
-        if (rollDiceBtn) {
-            rollDiceBtn.addEventListener('click', () => this.rollDice());
-            console.log('Кнопка кубика настроена');
-        }
-
-        // Кнопки заданий
-        const completeTaskBtn = document.getElementById('completeTaskBtn');
-        const helpOtherBtn = document.getElementById('helpOtherBtn');
-        const closeTaskBtn = document.getElementById('closeTaskBtn');
+        this.safeAddEventListener('rollDiceBtn', 'click', () => this.rollDice());
         
-        if (completeTaskBtn) completeTaskBtn.addEventListener('click', () => this.completeTask());
-        if (helpOtherBtn) helpOtherBtn.addEventListener('click', () => this.helpOtherPlayer());
-        if (closeTaskBtn) closeTaskBtn.addEventListener('click', () => this.closeTaskScreen());
-
-        // Кнопки доказательства
-        const convinceButtons = document.querySelectorAll('.convince-btn');
-        convinceButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => this.convinceAlien(parseInt(e.target.dataset.count)));
+        // Кнопки заданий
+        this.safeAddEventListener('completeTaskBtn', 'click', () => this.completeTask());
+        this.safeAddEventListener('helpOtherBtn', 'click', () => this.helpOtherPlayer());
+        this.safeAddEventListener('closeTaskBtn', 'click', () => this.closeTaskScreen());
+        
+        // Кнопки убеждения
+        document.querySelectorAll('.convince-button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const alienNumber = parseInt(e.currentTarget.dataset.alien);
+                this.convinceAlien(alienNumber);
+            });
         });
-
+        
         // Кнопка перезапуска
-        const restartBtn = document.getElementById('restartGameBtn');
-        if (restartBtn) {
-            restartBtn.addEventListener('click', () => this.restartGame());
-        }
-
-        console.log('Все обработчики событий настроены');
+        this.safeAddEventListener('restartGameBtn', 'click', () => this.restartGame());
+        
+        // Обработка ввода доказательства
+        this.safeAddEventListener('proofText', 'input', (e) => this.handleProofInput(e));
+        
+        console.log('✅ Обработчики событий установлены');
     }
 
-    // Показать экран загрузки
+    safeAddEventListener(elementId, event, handler) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener(event, handler);
+        } else {
+            console.warn(`⚠️ Элемент ${elementId} не найден`);
+        }
+    }
+
     showLoadingScreen() {
-        console.log('Показ экрана загрузки...');
         this.showScreen('loadingScreen');
         
-        // Анимация загрузки
-        const loadingProgress = document.querySelector('.loading-progress');
-        if (loadingProgress) {
-            loadingProgress.style.width = '100%';
-        }
-
-        // Имитация загрузки с меньшей задержкой
+        // Имитация загрузки ресурсов
         setTimeout(() => {
-            console.log('Загрузка завершена, переход к настройке профессии');
-            this.setupPlayerProfession();
+            this.initializePlayerProfession();
             this.showMainScreen();
-        }, 2000); // Уменьшил время загрузки
+        }, 3000);
     }
 
-    // Настройка профессии игрока
-    setupPlayerProfession() {
-        console.log('Настройка профессии игрока...');
+    initializePlayerProfession() {
+        const skill = getRandomSkill();
+        const interest = getRandomInterest();
         
-        const randomSkill = GAME_DATA.skills[Math.floor(Math.random() * GAME_DATA.skills.length)];
-        const randomInterest = GAME_DATA.interests[Math.floor(Math.random() * GAME_DATA.interests.length)];
+        this.player.skill = skill;
+        this.player.interest = interest;
+        this.player.profession = generateProfession(skill, interest);
         
-        this.player.skill = randomSkill;
-        this.player.interest = randomInterest;
-        this.player.profession = generateProfession(randomSkill, randomInterest);
-        
-        console.log('Профессия создана:', {
-            profession: this.player.profession,
-            skill: randomSkill,
-            interest: randomInterest
-        });
-
-        // Обновление интерфейса
-        this.updatePlayerInfo();
+        this.updatePlayerUI();
+        console.log('🎯 Профессия создана:', this.player.profession);
     }
 
-    // Обновление информации о игроке
-    updatePlayerInfo() {
-        const playerName = document.getElementById('playerName');
-        const professionTitle = document.getElementById('professionTitle');
-        const professionDescription = document.getElementById('professionDescription');
-        const playerAvatar = document.getElementById('playerAvatar');
-
-        if (playerName) playerName.textContent = this.player.name;
-        if (professionTitle) professionTitle.textContent = this.player.profession;
-        if (professionDescription) {
-            professionDescription.textContent = `Навык: ${this.player.skill} | Интерес: ${this.player.interest}`;
-        }
-        if (playerAvatar) playerAvatar.textContent = this.player.avatar;
+    updatePlayerUI() {
+        this.updateElementText('playerName', this.player.name);
+        this.updateElementText('playerAvatar', this.player.avatar);
+        this.updateElementText('professionTitle', this.player.profession);
+        this.updateElementText('professionDescription', 
+            `Навык: ${this.player.skill} | Интерес: ${this.player.interest}`);
+        this.updateElementText('skillTag', this.player.skill);
+        this.updateElementText('interestTag', this.player.interest);
+        this.updateElementText('starsCount', this.player.stars.toString());
     }
 
-    // Показать главный экран
+    updateElementText(elementId, text) {
+        const element = document.getElementById(elementId);
+        if (element) element.textContent = text;
+    }
+
     showMainScreen() {
-        console.log('Переход на главный экран...');
         this.showScreen('mainScreen');
         this.renderGameBoard();
-        this.updatePlayerStats();
-        console.log('Главный экран отображен');
+        this.updatePlayerPosition();
+        this.animateEntrance();
     }
 
-    // Рендер игрового поля
     renderGameBoard() {
-        console.log('Рендер игрового поля...');
-        const planetPath = document.querySelector('.planet-path');
-        if (!planetPath) {
-            console.error('Элемент .planet-path не найден!');
-            return;
-        }
+        const planetPath = document.getElementById('planetPath');
+        if (!planetPath) return;
 
         planetPath.innerHTML = '';
-        
+
         this.gameBoard.forEach(planet => {
             const planetElement = document.createElement('div');
             planetElement.className = `planet ${planet.type}`;
             planetElement.style.left = `${(planet.position / (this.gameBoard.length - 1)) * 90 + 5}%`;
-            planetElement.style.top = '50%';
-            planetElement.style.transform = 'translate(-50%, -50%)';
             planetElement.innerHTML = planet.icon;
-            planetElement.title = `${planet.name}\n${planet.description || ''}`;
+            planetElement.title = `${planet.name}\n${planet.description}`;
+            
+            // Анимация появления планет
+            planetElement.style.opacity = '0';
+            planetElement.style.transform = 'translateY(-50%) scale(0)';
             
             planetPath.appendChild(planetElement);
+
+            // Последовательная анимация появления
+            setTimeout(() => {
+                planetElement.style.transition = 'all 0.5s ease';
+                planetElement.style.opacity = '1';
+                planetElement.style.transform = 'translateY(-50%) scale(1)';
+            }, planet.position * 100);
         });
-        
-        this.updatePlayerPosition();
-        console.log('Игровое поле отрендерено');
     }
 
-    // Обновление позиции игрока
     updatePlayerPosition() {
-        const playerRocket = document.getElementById('playerRocket');
-        if (!playerRocket) {
-            console.error('Элемент playerRocket не найден!');
-            return;
-        }
+        const playerMarker = document.getElementById('playerMarker');
+        if (!playerMarker || !this.gameBoard[this.player.position]) return;
 
-        const currentPlanet = this.gameBoard[this.player.position];
-        
-        if (currentPlanet) {
-            const left = `${(currentPlanet.position / (this.gameBoard.length - 1)) * 90 + 5}%`;
-            playerRocket.style.left = left;
-            playerRocket.style.top = '30%';
-            console.log('Позиция игрока обновлена:', this.player.position);
-        }
+        const newLeft = `${(this.player.position / (this.gameBoard.length - 1)) * 90 + 5}%`;
+        playerMarker.style.left = newLeft;
     }
 
-    // Бросок кубика
+    animateEntrance() {
+        const elements = document.querySelectorAll('.game-header, .game-area, .game-controls, .profession-panel');
+        elements.forEach((element, index) => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                element.style.transition = 'all 0.6s ease';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+    }
+
     async rollDice() {
         if (this.isDiceRolling) return;
         
-        console.log('Бросок кубика...');
         this.isDiceRolling = true;
         const diceBtn = document.getElementById('rollDiceBtn');
         const diceResult = document.getElementById('diceResult');
         
-        if (!diceBtn || !diceResult) {
-            console.error('Элементы кубика не найдены!');
-            this.isDiceRolling = false;
-            return;
+        if (diceBtn) diceBtn.disabled = true;
+
+        // Анимация броска
+        for (let i = 0; i < 8; i++) {
+            const randomNum = Math.floor(Math.random() * 6) + 1;
+            if (diceResult) diceResult.textContent = randomNum;
+            await this.delay(150);
         }
 
-        diceBtn.disabled = true;
-        
-        // Анимация броска
-        for (let i = 0; i < 10; i++) {
-            const randomNum = Math.floor(Math.random() * 6) + 1;
-            diceResult.textContent = randomNum;
-            await this.sleep(100);
-        }
-        
         const finalRoll = Math.floor(Math.random() * 6) + 1;
-        diceResult.textContent = finalRoll;
-        diceResult.classList.add('fade-in-up');
-        
-        console.log('Выпало число:', finalRoll);
-        
+        if (diceResult) {
+            diceResult.textContent = finalRoll;
+            diceResult.classList.add('fade-in-up');
+        }
+
+        console.log(`🎲 Выпало: ${finalRoll}`);
+
         setTimeout(() => {
             this.movePlayer(finalRoll);
-            diceResult.classList.remove('fade-in-up');
-            diceBtn.disabled = false;
+            if (diceResult) diceResult.classList.remove('fade-in-up');
+            if (diceBtn) diceBtn.disabled = false;
             this.isDiceRolling = false;
         }, 1000);
     }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    async movePlayer(steps) {
+        const newPosition = Math.min(this.player.position + steps, this.gameBoard.length - 1);
+        const distance = newPosition - this.player.position;
+        
+        // Анимация движения
+        for (let i = 0; i <= distance; i++) {
+            this.player.position = this.player.position + 1;
+            this.updatePlayerPosition();
+            await this.delay(300);
+        }
+
+        this.handlePlanetArrival();
     }
 
-    // Движение игрока
-    movePlayer(steps) {
-        console.log('Движение игрока на', steps, 'шагов');
-        const newPosition = Math.min(this.player.position + steps, this.gameBoard.length - 1);
-        this.player.position = newPosition;
-        
-        this.updatePlayerPosition();
-        
-        // Проверка достижения конечной планеты
-        if (this.gameBoard[newPosition].isWin) {
-            console.log('Игрок достиг финальной планеты');
-            if (this.player.stars >= 10) {
+    handlePlanetArrival() {
+        const currentPlanet = this.gameBoard[this.player.position];
+        console.log(`🪐 Прибытие на: ${currentPlanet.name} (${currentPlanet.type})`);
+
+        // Проверка победы
+        if (currentPlanet.isWin) {
+            if (this.player.stars >= GAME_CONFIG.totalStarsToWin) {
                 this.showWinScreen();
             } else {
-                setTimeout(() => {
-                    alert('Нужно собрать 10 звезд, чтобы достичь Планеты Профессий!');
-                }, 500);
+                this.showMessage(`Нужно собрать ${GAME_CONFIG.totalStarsToWin} звезд для достижения Планеты Профессий!`);
+                setTimeout(() => this.showMainScreen(), 2000);
             }
             return;
         }
-        
-        // Активация задания планеты
+
+        // Активация планеты
         setTimeout(() => {
-            this.activatePlanet(this.gameBoard[newPosition]);
+            this.activatePlanet(currentPlanet);
         }, 1000);
     }
 
-    // Активация планеты
     activatePlanet(planet) {
-        console.log('Активация планеты:', planet.type, planet.name);
-        
+        this.player.hasVisited.add(planet.position);
+
         switch (planet.type) {
             case 'blue':
                 this.showTaskScreen(planet);
@@ -300,170 +284,170 @@ class SpaceProfessionGame {
                 this.showEventScreen();
                 break;
             default:
-                console.log('Неизвестный тип планеты:', planet.type);
                 this.showMainScreen();
         }
     }
 
-    // Показать экран задания
     showTaskScreen(planet) {
-        console.log('Показ экрана задания для планеты:', planet.name);
-        
         const problem = getRandomProblem();
-        const taskPlanetColor = document.getElementById('taskPlanetColor');
-        const taskPlanetName = document.getElementById('taskPlanetName');
-        const taskTitle = document.getElementById('taskTitle');
-        const taskDescription = document.getElementById('taskDescription');
+        
+        this.updateElementText('taskPlanetName', planet.name);
+        this.updateElementText('taskPlanetType', PLANET_TYPES[planet.type].name);
+        this.updateElementText('taskTitle', 'Космическая Задача');
+        this.updateElementText('taskDescription', 
+            `${problem}\n\n🎯 Твоя профессия: ${this.player.profession}\n\n💫 Задание: Придумай, как твоя профессия может помочь решить эту проблему!`);
+        
+        // Настройка планеты
+        const planetIcon = document.getElementById('taskPlanetIcon');
+        const planet3D = document.getElementById('taskPlanet3D');
+        if (planetIcon) planetIcon.textContent = planet.icon;
+        if (planet3D) planet3D.style.background = `linear-gradient(135deg, ${planet.color}, ${this.lightenColor(planet.color, 20)})`;
 
-        if (taskPlanetColor) taskPlanetColor.style.background = planet.color;
-        if (taskPlanetName) taskPlanetName.textContent = planet.name;
-        if (taskTitle) taskTitle.textContent = 'Космическая задача';
-        if (taskDescription) {
-            taskDescription.textContent = `${problem}\n\nТвоя профессия: ${this.player.profession}\n\nЗадание: Придумай, как твоя профессия может помочь!`;
-        }
-        
-        // Настройка таймера
         this.startTimer();
-        
         this.showScreen('taskScreen');
     }
 
-    // Показать экран доказательства
     showProofScreen() {
-        console.log('Показ экрана доказательства');
-        
-        const proofStatement = document.getElementById('proofStatement');
-        const convincedCount = document.getElementById('convincedCount');
-        const proofText = document.getElementById('proofText');
-
-        if (proofStatement) proofStatement.textContent = getRandomProofTemplate(this.player.profession);
-        if (convincedCount) convincedCount.textContent = '0';
-        if (proofText) proofText.value = '';
+        this.convincedAliens.clear();
+        this.updateElementText('convincedCount', '0');
+        this.updateElementText('proofStatement', 
+            `Моя профессия "${this.player.profession}" полезна для космических путешественников, потому что...`);
         
         // Сброс кнопок убеждения
-        document.querySelectorAll('.convince-btn').forEach(btn => {
-            btn.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+        document.querySelectorAll('.convince-button').forEach(btn => {
             btn.disabled = false;
+            btn.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
         });
-        
+
+        // Сброс текстового поля
+        const proofText = document.getElementById('proofText');
+        if (proofText) proofText.value = '';
+
         this.showScreen('proofScreen');
     }
 
-    // Показать экран помощи
     showHelpScreen() {
-        console.log('Показ экрана помощи');
-        
         const helpMessage = getRandomHelpMessage();
-        const taskPlanetColor = document.getElementById('taskPlanetColor');
-        const taskPlanetName = document.getElementById('taskPlanetName');
-        const taskTitle = document.getElementById('taskTitle');
-        const taskDescription = document.getElementById('taskDescription');
-
-        if (taskPlanetColor) taskPlanetColor.style.background = GAME_DATA.planetTypes.green.color;
-        if (taskPlanetName) taskPlanetName.textContent = 'Помощь другим';
-        if (taskTitle) taskTitle.textContent = 'Помощь товарищу';
-        if (taskDescription) taskDescription.textContent = helpMessage;
         
+        this.updateElementText('taskPlanetName', 'Помощь Другим');
+        this.updateElementText('taskPlanetType', PLANET_TYPES.green.name);
+        this.updateElementText('taskTitle', 'Космическая Взаимопомощь');
+        this.updateElementText('taskDescription', 
+            `${helpMessage}\n\n✨ Помоги товарищу по космическому путешествию!`);
+
+        // Настройка зеленой планеты
+        const planetIcon = document.getElementById('taskPlanetIcon');
+        const planet3D = document.getElementById('taskPlanet3D');
+        if (planetIcon) planetIcon.textContent = '🟢';
+        if (planet3D) planet3D.style.background = 'linear-gradient(135deg, #66bb6a, #4caf50)';
+
         this.showScreen('taskScreen');
     }
 
-    // Показать экран события
     showEventScreen() {
-        console.log('Показ экрана события');
-        
         const event = getRandomEvent();
-        const taskPlanetColor = document.getElementById('taskPlanetColor');
-        const taskPlanetName = document.getElementById('taskPlanetName');
-        const taskTitle = document.getElementById('taskTitle');
-        const taskDescription = document.getElementById('taskDescription');
+        
+        this.updateElementText('taskPlanetName', 'Космическое Событие');
+        this.updateElementText('taskPlanetType', PLANET_TYPES.yellow.name);
+        this.updateElementText('taskTitle', event.title);
+        this.updateElementText('taskDescription', event.description);
 
-        if (taskPlanetColor) taskPlanetColor.style.background = GAME_DATA.planetTypes.yellow.color;
-        if (taskPlanetName) taskPlanetName.textContent = 'Космическое событие';
-        if (taskTitle) taskTitle.textContent = event.title;
-        if (taskDescription) taskDescription.textContent = event.description;
-        
+        // Настройка желтой планеты
+        const planetIcon = document.getElementById('taskPlanetIcon');
+        const planet3D = document.getElementById('taskPlanet3D');
+        if (planetIcon) planetIcon.textContent = '🟡';
+        if (planet3D) planet3D.style.background = 'linear-gradient(135deg, #ffd54f, #ffc107)';
+
         // Обработка эффектов события
-        if (event.type === 'positive') {
-            if (event.effect.includes('+1 звезда')) {
-                this.addStars(1);
-            } else if (event.effect.includes('+2 звезды')) {
-                this.addStars(2);
-            }
+        if (event.effect.stars) {
+            this.addStars(event.effect.stars);
         }
-        
+
         this.showScreen('taskScreen');
     }
 
-    // Завершение задания
     completeTask() {
-        console.log('Задание завершено');
         this.stopTimer();
         
-        // Награда за выполнение задания
-        const starsEarned = Math.floor(Math.random() * 2) + 1; // 1-2 звезды
+        const starsEarned = Math.random() > 0.3 ? 2 : 1; // 70% chance for 2 stars
         this.addStars(starsEarned);
         
         this.showMainScreen();
         
-        // Показ сообщения о награде
         setTimeout(() => {
-            alert(`Отлично! Ты получил ${starsEarned} ⭐ за решение задачи!`);
+            this.showMessage(`Отлично! Ты получил ${starsEarned} ⭐ за решение задачи!`);
         }, 500);
     }
 
-    // Помощь другому игроку
     helpOtherPlayer() {
-        console.log('Помощь другому игроку');
         this.stopTimer();
         this.addStars(1);
         
         this.showMainScreen();
         
         setTimeout(() => {
-            alert('Молодец! Ты получил 1 ⭐ за помощь товарищу!');
+            this.showMessage('Молодец! Ты получил 1 ⭐ за помощь товарищу!');
         }, 500);
     }
 
-    // Убеждение инопланетянина
-    convinceAlien(count) {
-        console.log('Убеждение инопланетянина №', count);
+    handleProofInput(event) {
+        const text = event.target.value;
+        const buttons = document.querySelectorAll('.convince-button');
         
-        const convincedCountElement = document.getElementById('convincedCount');
-        if (!convincedCountElement) return;
-        
-        const convincedCount = parseInt(convincedCountElement.textContent);
-        const newCount = convincedCount + 1;
-        
-        convincedCountElement.textContent = newCount;
-        
-        // Анимация убеждения
-        const aliens = document.querySelectorAll('.convince-btn');
-        if (aliens[count - 1]) {
-            aliens[count - 1].style.background = 'linear-gradient(45deg, #66bb6a, #4caf50)';
-            aliens[count - 1].disabled = true;
+        buttons.forEach(btn => {
+            btn.disabled = text.length < GAME_CONFIG.minProofLength;
+        });
+    }
+
+    convinceAlien(alienNumber) {
+        if (this.convincedAliens.has(alienNumber)) return;
+
+        const proofText = document.getElementById('proofText');
+        if (!proofText || proofText.value.length < GAME_CONFIG.minProofLength) {
+            this.showMessage('Нужно написать убедительное доказательство! (минимум 20 символов)');
+            return;
         }
+
+        this.convincedAliens.add(alienNumber);
+        this.updateElementText('convincedCount', this.convincedAliens.size.toString());
+
+        // Визуальное подтверждение убеждения
+        const alienElement = document.querySelector(`.alien-${alienNumber}`);
+        const buttonElement = document.querySelector(`[data-alien="${alienNumber}"]`);
         
-        if (newCount === 3) {
-            console.log('Все инопланетяне убеждены!');
+        if (alienElement) {
+            alienElement.style.animation = 'none';
+            setTimeout(() => {
+                alienElement.style.animation = 'alienFloat 3s ease-in-out infinite';
+            }, 10);
+        }
+
+        if (buttonElement) {
+            buttonElement.disabled = true;
+            buttonElement.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        }
+
+        // Вибрация (если доступно)
+        if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
+            Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+
+        if (this.convincedAliens.size === 3) {
             this.addStars(3);
             setTimeout(() => {
                 this.showMainScreen();
-                alert('Превосходно! Ты убедил всех и получил 3 ⭐!');
-            }, 1000);
+                this.showMessage('Превосходно! Ты убедил всех инопланетян и получил 3 ⭐!');
+            }, 1500);
         }
     }
 
-    // Закрытие экрана задания
     closeTaskScreen() {
-        console.log('Закрытие экрана задания');
         this.stopTimer();
         this.showMainScreen();
     }
 
-    // Таймер для заданий
     startTimer() {
-        console.log('Запуск таймера');
-        this.timeLeft = 120;
+        this.timeLeft = GAME_CONFIG.timerDuration;
         this.updateTimerDisplay();
         
         this.timerInterval = setInterval(() => {
@@ -472,7 +456,7 @@ class SpaceProfessionGame {
             
             if (this.timeLeft <= 0) {
                 this.stopTimer();
-                alert('Время вышло! Попробуй в следующий раз.');
+                this.showMessage('Время вышло! Возвращаемся на карту...');
                 this.showMainScreen();
             }
         }, 1000);
@@ -482,83 +466,80 @@ class SpaceProfessionGame {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
-            console.log('Таймер остановлен');
         }
     }
 
     updateTimerDisplay() {
         const minutes = Math.floor(this.timeLeft / 60);
         const seconds = this.timeLeft % 60;
-        const timerText = document.getElementById('timerText');
-        const timerFill = document.querySelector('.timer-fill');
-
-        if (timerText) {
-            timerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
+        this.updateElementText('timerText', `${minutes}:${seconds.toString().padStart(2, '0')}`);
         
-        // Обновление заполнения таймера
-        if (timerFill) {
-            const progress = ((120 - this.timeLeft) / 120) * 100;
-            timerFill.style.background = `conic-gradient(#4caf50 ${progress}%, transparent 0%)`;
+        // Обновление прогресс-бара
+        const progress = document.querySelector('.timer-progress');
+        if (progress) {
+            const circumference = 283; // 2 * π * r
+            const offset = circumference - (this.timeLeft / GAME_CONFIG.timerDuration) * circumference;
+            progress.style.strokeDashoffset = offset;
         }
     }
 
-    // Добавление звезд
     addStars(count) {
-        console.log('Добавление звезд:', count);
         this.player.stars += count;
-        this.updatePlayerStats();
+        this.updateElementText('starsCount', this.player.stars.toString());
         
-        // Проверка победы
-        if (this.player.stars >= 10 && this.player.position === this.gameBoard.length - 1) {
-            this.showWinScreen();
+        // Анимация получения звезд
+        this.animateStars(count);
+        
+        console.log(`⭐ Добавлено ${count} звезд. Всего: ${this.player.stars}`);
+    }
+
+    animateStars(count) {
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+                const starsDisplay = document.querySelector('.stars-display');
+                if (starsDisplay) {
+                    starsDisplay.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        starsDisplay.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            }, i * 200);
         }
     }
 
-    // Обновление статистики игрока
-    updatePlayerStats() {
-        const starsCount = document.getElementById('starsCount');
-        if (starsCount) {
-            starsCount.textContent = this.player.stars;
-        }
-        console.log('Звезды обновлены:', this.player.stars);
-    }
-
-    // Показать экран победы
     showWinScreen() {
-        console.log('Показ экрана победы!');
-        
-        const finalStars = document.getElementById('finalStars');
-        const winProfession = document.getElementById('winProfession');
-
-        if (finalStars) finalStars.textContent = this.player.stars;
-        if (winProfession) winProfession.textContent = this.player.profession;
+        this.updateElementText('finalStars', this.player.stars.toString());
+        this.updateElementText('winProfession', this.player.profession);
         
         this.showScreen('winScreen');
         
-        // Отправка данных в Telegram
-        if (window.Telegram && Telegram.WebApp) {
+        // Победоносная анимация
+        this.celebrateVictory();
+    }
+
+    celebrateVictory() {
+        // Вибрация победы
+        if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
             Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
         }
-        
-        console.log('Игра завершена! Поздравляем с победой!');
+
+        // Дополнительные анимации можно добавить здесь
+        console.log('🎉 Победа! Игра завершена');
     }
 
-    // Перезапуск игры
     restartGame() {
-        console.log('Перезапуск игры...');
         this.player.stars = 0;
         this.player.position = 0;
-        this.generateGameBoard();
-        this.setupPlayerProfession();
+        this.player.hasVisited.clear();
+        this.convincedAliens.clear();
+        
+        this.initializePlayerProfession();
         this.showMainScreen();
-        console.log('Игра перезапущена');
+        
+        this.showMessage('Новая космическая миссия началась! Удачи!');
     }
 
-    // Утилита для переключения экранов
     showScreen(screenId) {
-        console.log('Переключение на экран:', screenId);
-        
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
@@ -567,22 +548,48 @@ class SpaceProfessionGame {
         if (targetScreen) {
             targetScreen.classList.add('active');
             this.currentScreen = screenId;
-            console.log('Экран переключен успешно');
-        } else {
-            console.error('Экран не найден:', screenId);
         }
+    }
+
+    showMessage(message) {
+        // Можно реализовать красивую систему уведомлений
+        console.log(`💬 ${message}`);
+        alert(message); // Временное решение
+    }
+
+    lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return `#${(0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)}`;
+    }
+
+    handleInitError() {
+        this.showMessage('Произошла ошибка при загрузке игры. Пожалуйста, обновите страницу.');
+    }
+
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
 
 // Инициализация игры при загрузке
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM загружен, инициализация игры...');
-    window.spaceGame = new SpaceProfessionGame();
+    console.log('🌌 Запуск космического приключения...');
+    window.cosmicGame = new CosmicProfessionGame();
 });
 
 // Глобальные функции для отладки
 window.debugGame = () => {
-    console.log('Состояние игры:', window.spaceGame);
-    console.log('Игрок:', window.spaceGame.player);
-    console.log('Игровое поле:', window.spaceGame.gameBoard);
+    console.log('Отладочная информация:', window.cosmicGame);
+};
+
+window.cheatStars = (count = 10) => {
+    if (window.cosmicGame) {
+        window.cosmicGame.addStars(count);
+    }
 };

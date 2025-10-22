@@ -3,166 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Путешествие к Планете Профессий</title>
+    <title>🚀 Путешествие к Планете Профессий</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="universe">
+        <!-- Анимированный фон -->
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="clouds"></div>
+
         <!-- Экран загрузки -->
         <div id="loadingScreen" class="screen active">
-            <div class="stars-background">
-                <div class="star"></div>
-                <div class="star"></div>
-                <div class="star"></div>
-                <div class="star"></div>
-                <div class="star"></div>
-            </div>
-            <div class="loading-content">
-                <div class="rocket-animation">
+            <div class="loading-container">
+                <div class="rocket-loader">
                     <div class="rocket">
-                        <div class="rocket-body"></div>
-                        <div class="rocket-fin-left"></div>
-                        <div class="rocket-fin-right"></div>
-                        <div class="rocket-fire"></div>
+                        <div class="rocket-body">
+                            <div class="window"></div>
+                        </div>
+                        <div class="fin fin-left"></div>
+                        <div class="fin fin-right"></div>
+                        <div class="exhaust-flame"></div>
                     </div>
                 </div>
-                <h1 class="game-title">ПУТЕШЕСТВИЕ К ПЛАНЕТЕ ПРОФЕССИЙ</h1>
+                <h1 class="game-title">
+                    <span class="title-word">ПУТЕШЕСТВИЕ</span>
+                    <span class="title-word">К ПЛАНЕТЕ</span>
+                    <span class="title-word">ПРОФЕССИЙ</span>
+                </h1>
                 <div class="loading-bar">
-                    <div class="loading-progress"></div>
+                    <div class="progress"></div>
                 </div>
+                <p class="loading-text">Запускаем космические двигатели...</p>
             </div>
         </div>
 
-        <!-- Главный экран игры -->
+        <!-- Главный экран -->
         <div id="mainScreen" class="screen">
-            <div class="stars-background">
-                <div class="star"></div>
-                <div class="star"></div>
-                <div class="star"></div>
-                <div class="star"></div>
-                <div class="star"></div>
-            </div>
-            
-            <div class="header">
-                <div class="player-info">
-                    <div class="avatar" id="playerAvatar">🚀</div>
-                    <div class="player-stats">
-                        <div class="player-name" id="playerName">Космонавт</div>
-                        <div class="stars-count">
-                            <span class="star-icon">⭐</span>
-                            <span id="starsCount">0</span>/10
+            <div class="main-container">
+                <!-- Хедер -->
+                <header class="game-header">
+                    <div class="player-card">
+                        <div class="avatar" id="playerAvatar">👨‍🚀</div>
+                        <div class="player-info">
+                            <h2 id="playerName" class="player-name">Космонавт</h2>
+                            <div class="stars-display">
+                                <span class="star">⭐</span>
+                                <span id="starsCount" class="stars-count">0</span>
+                                <span class="stars-max">/10</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <div class="profession-badge">
+                        <span id="professionTitle">Космический Исследователь</span>
+                    </div>
+                </header>
 
-            <div class="game-board">
-                <div class="planet-path">
-                    <!-- Планеты будут генерироваться через JavaScript -->
-                </div>
-                <div class="player-rocket" id="playerRocket">🚀</div>
-            </div>
+                <!-- Игровое поле -->
+                <main class="game-area">
+                    <div class="galaxy-map">
+                        <div class="planet-path" id="planetPath">
+                            <!-- Планеты генерируются через JS -->
+                        </div>
+                        <div class="player-marker" id="playerMarker">
+                            <div class="spaceship">
+                                <div class="ship-body"></div>
+                                <div class="ship-wings">
+                                    <div class="wing"></div>
+                                    <div class="wing"></div>
+                                </div>
+                                <div class="engine-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
 
-            <div class="controls">
-                <button id="rollDiceBtn" class="dice-btn">
-                    <span class="dice">🎲</span>
-                    Бросить кубик
-                </button>
-                <div class="dice-result" id="diceResult"></div>
-            </div>
+                <!-- Управление -->
+                <footer class="game-controls">
+                    <button id="rollDiceBtn" class="dice-button">
+                        <div class="dice">
+                            <div class="dice-face">?</div>
+                        </div>
+                        <span class="button-text">Бросить кубик</span>
+                    </button>
+                    <div class="dice-result" id="diceResult"></div>
+                </footer>
 
-            <div class="profession-info">
-                <h3 id="professionTitle">Профессия</h3>
-                <p id="professionDescription"></p>
+                <!-- Информация о профессии -->
+                <aside class="profession-panel">
+                    <h3>Моя космическая профессия</h3>
+                    <p id="professionDescription" class="profession-desc">
+                        Навык: Творчество | Интерес: Космос
+                    </p>
+                    <div class="skill-tags">
+                        <span class="skill-tag" id="skillTag">Творчество</span>
+                        <span class="skill-tag" id="interestTag">Космос</span>
+                    </div>
+                </aside>
             </div>
         </div>
 
         <!-- Экран задания -->
         <div id="taskScreen" class="screen">
-            <div class="task-header">
-                <div class="planet-indicator">
-                    <div class="planet-color" id="taskPlanetColor"></div>
-                    <span id="taskPlanetName">Планета</span>
+            <div class="task-container">
+                <div class="task-header">
+                    <div class="planet-header">
+                        <div class="planet-icon" id="taskPlanetIcon">🪐</div>
+                        <div class="planet-info">
+                            <h2 id="taskPlanetName">Синяя Планета</h2>
+                            <span class="planet-type" id="taskPlanetType">Космические задачи</span>
+                        </div>
+                    </div>
+                    <button class="close-button" id="closeTaskBtn">
+                        <span>×</span>
+                    </button>
                 </div>
-                <button id="closeTaskBtn" class="close-btn">×</button>
-            </div>
 
-            <div class="task-content">
-                <div class="planet-animation">
-                    <div class="rotating-planet" id="taskPlanetAnimation">
-                        <div class="planet-surface"></div>
-                        <div class="planet-rings"></div>
+                <div class="task-content">
+                    <div class="animated-planet">
+                        <div class="planet-3d" id="taskPlanet3D">
+                            <div class="planet-surface"></div>
+                            <div class="planet-rings"></div>
+                            <div class="planet-glow"></div>
+                        </div>
                     </div>
-                </div>
-                
-                <h2 id="taskTitle">Задание</h2>
-                <p id="taskDescription"></p>
-                <div class="task-timer">
-                    <div class="timer-circle">
-                        <div class="timer-fill"></div>
-                        <span id="timerText">2:00</span>
+
+                    <div class="task-description">
+                        <h3 id="taskTitle">Космическая задача</h3>
+                        <p id="taskDescription" class="task-text">
+                            Загрузка задания...
+                        </p>
                     </div>
-                </div>
-                
-                <div class="task-actions">
-                    <button id="completeTaskBtn" class="action-btn success">Задание выполнено!</button>
-                    <button id="helpOtherBtn" class="action-btn help">Помочь другому</button>
+
+                    <div class="task-timer">
+                        <div class="timer">
+                            <div class="timer-circle">
+                                <svg class="timer-svg" viewBox="0 0 100 100">
+                                    <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                                    <circle class="timer-progress" cx="50" cy="50" r="45"></circle>
+                                </svg>
+                                <div class="timer-text" id="timerText">2:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="task-actions">
+                        <button class="action-button primary" id="completeTaskBtn">
+                            <span class="button-icon">✅</span>
+                            Задание выполнено!
+                        </button>
+                        <button class="action-button secondary" id="helpOtherBtn">
+                            <span class="button-icon">🤝</span>
+                            Помочь другому игроку
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Экран доказательства -->
         <div id="proofScreen" class="screen">
-            <div class="proof-header">
-                <h2>Доказательство полезности</h2>
-                <div class="proof-stats">
-                    Убеждено: <span id="convincedCount">0</span>/3
+            <div class="proof-container">
+                <div class="proof-header">
+                    <h2>Доказательство полезности</h2>
+                    <div class="proof-progress">
+                        Убеждено: <span id="convincedCount">0</span>/3 инопланетян
+                    </div>
                 </div>
-            </div>
 
-            <div class="proof-content">
-                <div class="proof-animation">
-                    <div class="speaking-bubble">
-                        <div class="bubble-text" id="proofStatement">
-                            Моя профессия полезна для космонавтов, потому что...
+                <div class="proof-content">
+                    <div class="aliens-scene">
+                        <div class="alien alien-1" data-alien="1">
+                            <div class="alien-body">
+                                <div class="alien-eyes">
+                                    <div class="eye"></div>
+                                    <div class="eye"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alien alien-2" data-alien="2">
+                            <div class="alien-body">
+                                <div class="alien-eyes">
+                                    <div class="eye"></div>
+                                    <div class="eye"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alien alien-3" data-alien="3">
+                            <div class="alien-body">
+                                <div class="alien-eyes">
+                                    <div class="eye"></div>
+                                    <div class="eye"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="alien-listener"></div>
-                </div>
 
-                <div class="proof-input">
-                    <textarea id="proofText" placeholder="Объясни, почему твоя профессия полезна для космических путешественников..."></textarea>
-                </div>
+                    <div class="proof-statement">
+                        <div class="speech-bubble">
+                            <p id="proofStatement">Моя профессия полезна потому что...</p>
+                        </div>
+                    </div>
 
-                <div class="convince-buttons">
-                    <button class="convince-btn" data-count="1">👽 Убедить 1-го</button>
-                    <button class="convince-btn" data-count="2">👽 Убедить 2-го</button>
-                    <button class="convince-btn" data-count="3">👽 Убедить 3-го</button>
+                    <div class="proof-input">
+                        <textarea id="proofText" placeholder="Расскажи, почему твоя профессия важна для космических путешественников..."></textarea>
+                        <div class="input-hint">Минимум 20 символов для убеждения</div>
+                    </div>
+
+                    <div class="convince-buttons">
+                        <button class="convince-button" data-alien="1">
+                            <span class="alien-emoji">👽</span>
+                            Убедить 1-го
+                        </button>
+                        <button class="convince-button" data-alien="2">
+                            <span class="alien-emoji">👽</span>
+                            Убедить 2-го
+                        </button>
+                        <button class="convince-button" data-alien="3">
+                            <span class="alien-emoji">👽</span>
+                            Убедить 3-го
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Экран победы -->
         <div id="winScreen" class="screen">
-            <div class="win-content">
-                <div class victory-animation>
-                    <div class="win-planet">
-                        <div class="planet-globe"></div>
-                        <div class="planet-sparkles">
+            <div class="victory-container">
+                <div class="victory-animation">
+                    <div class="trophy-planet">
+                        <div class="planet-core"></div>
+                        <div class="planet-crust"></div>
+                        <div class="planet-rings"></div>
+                        <div class="sparkles">
+                            <div class="sparkle"></div>
+                            <div class="sparkle"></div>
                             <div class="sparkle"></div>
                             <div class="sparkle"></div>
                             <div class="sparkle"></div>
                         </div>
                     </div>
                 </div>
-                <h1>ПОБЕДА! 🎉</h1>
-                <p>Ты достиг Планеты Профессий!</p>
-                <div class="win-stats">
-                    <div class="final-stars">⭐ <span id="finalStars">10</span> звезд</div>
-                    <div class="profession-master">Мастер профессии: <span id="winProfession"></span></div>
+
+                <div class="victory-content">
+                    <h1 class="victory-title">Миссия выполнена! 🎉</h1>
+                    <p class="victory-subtitle">Ты достиг Планеты Профессий!</p>
+
+                    <div class="victory-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="finalStars">10</div>
+                                <div class="stat-label">звезд собрано</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="winProfession">Профессия</div>
+                                <div class="stat-label">космическая профессия</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="victory-message">
+                        <p>Теперь вся галактика знает о важности твоей профессии!</p>
+                    </div>
+
+                    <button class="victory-button" id="restartGameBtn">
+                        <span class="button-icon">🔄</span>
+                        Начать новую миссию
+                    </button>
                 </div>
-                <button id="restartGameBtn" class="action-btn">Играть снова</button>
             </div>
         </div>
     </div>

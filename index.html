@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Путешествие к Планете Профессий</title>
+    <title>🎮 Космическое Приключение Профессий</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -28,79 +28,117 @@
                     </div>
                 </div>
                 <h1 class="game-title">
-                    <span class="title-word">ПУТЕШЕСТВИЕ</span>
-                    <span class="title-word">К ПЛАНЕТЕ</span>
+                    <span class="title-word">КОСМИЧЕСКОЕ</span>
+                    <span class="title-word">ПРИКЛЮЧЕНИЕ</span>
                     <span class="title-word">ПРОФЕССИЙ</span>
                 </h1>
                 <div class="loading-bar">
                     <div class="progress"></div>
                 </div>
-                <p class="loading-text">Запускаем космические двигатели...</p>
+                <p class="loading-text">Запускаем многопользовательскую вселенную...</p>
             </div>
         </div>
 
-        <!-- Главный экран -->
+        <!-- Экран настройки игры -->
+        <div id="setupScreen" class="screen">
+            <div class="setup-container">
+                <h1 class="setup-title">Настройка Игры</h1>
+                
+                <div class="setup-section">
+                    <h2>👥 Количество игроков</h2>
+                    <div class="players-grid" id="playersGrid">
+                        <!-- 2-16 игроков -->
+                    </div>
+                </div>
+
+                <div class="setup-section">
+                    <h2>🎯 Игровые настройки</h2>
+                    <div class="settings">
+                        <div class="setting-item">
+                            <label>Стартовые монеты:</label>
+                            <input type="number" id="startCoins" value="50" min="10" max="200">
+                        </div>
+                        <div class="setting-item">
+                            <label>Цель игры (монеты):</label>
+                            <input type="number" id="targetCoins" value="300" min="100" max="1000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="players-list" id="playersList">
+                    <!-- Список игроков -->
+                </div>
+
+                <button class="start-button" id="startGameBtn">🚀 Начать Игру</button>
+            </div>
+        </div>
+
+        <!-- Главный экран игры -->
         <div id="mainScreen" class="screen">
             <div class="main-container">
-                <!-- Хедер -->
+                <!-- Хедер с информацией о текущем игроке -->
                 <header class="game-header">
-                    <div class="player-card">
-                        <div class="avatar" id="playerAvatar">👨‍🚀</div>
-                        <div class="player-info">
-                            <h2 id="playerName" class="player-name">Космонавт</h2>
-                            <div class="stars-display">
-                                <span class="star">⭐</span>
-                                <span id="starsCount" class="stars-count">0</span>
-                                <span class="stars-max">/10</span>
+                    <div class="current-player">
+                        <div class="player-turn-indicator">
+                            <span class="turn-text">Сейчас ходит:</span>
+                            <div class="player-badge" id="currentPlayerBadge">
+                                <span class="player-avatar" id="currentPlayerAvatar">👨‍🚀</span>
+                                <div class="player-info">
+                                    <span class="player-name" id="currentPlayerName">Игрок 1</span>
+                                    <span class="player-coins">🪙 <span id="currentPlayerCoins">50</span></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="profession-badge">
-                        <span id="professionTitle">Космический Исследователь</span>
+                    
+                    <div class="game-controls-header">
+                        <button class="icon-button" id="shopBtn" title="Магазин">
+                            🏪
+                        </button>
+                        <button class="icon-button" id="playersBtn" title="Игроки">
+                            👥
+                        </button>
+                        <button class="icon-button" id="settingsBtn" title="Настройки">
+                            ⚙️
+                        </button>
                     </div>
                 </header>
 
                 <!-- Игровое поле -->
                 <main class="game-area">
-                    <div class="galaxy-map">
-                        <div class="planet-path" id="planetPath">
-                            <!-- Планеты генерируются через JS -->
+                    <div class="game-board-container">
+                        <div class="game-board" id="gameBoard">
+                            <!-- 32 клетки поля -->
                         </div>
-                        <div class="player-marker" id="playerMarker">
-                            <div class="spaceship">
-                                <div class="ship-body"></div>
-                                <div class="ship-wings">
-                                    <div class="wing"></div>
-                                    <div class="wing"></div>
-                                </div>
-                                <div class="engine-glow"></div>
-                            </div>
+                        <div class="players-on-board" id="playersOnBoard">
+                            <!-- Фигурки игроков -->
                         </div>
                     </div>
                 </main>
 
-                <!-- Управление -->
-                <footer class="game-controls">
-                    <button id="rollDiceBtn" class="dice-button">
-                        <div class="dice">
-                            <div class="dice-face">?</div>
-                        </div>
-                        <span class="button-text">Бросить кубик</span>
-                    </button>
-                    <div class="dice-result" id="diceResult"></div>
-                </footer>
-
-                <!-- Информация о профессии -->
-                <aside class="profession-panel">
-                    <h3>Моя космическая профессия</h3>
-                    <p id="professionDescription" class="profession-desc">
-                        Навык: Творчество | Интерес: Космос
-                    </p>
-                    <div class="skill-tags">
-                        <span class="skill-tag" id="skillTag">Творчество</span>
-                        <span class="skill-tag" id="interestTag">Космос</span>
+                <!-- Панель управления -->
+                <footer class="control-panel">
+                    <div class="dice-section">
+                        <button class="dice-button" id="rollDiceBtn">
+                            <div class="dice" id="dice">
+                                <div class="dice-face">?</div>
+                            </div>
+                            <span class="button-text">Бросить кубик</span>
+                        </button>
+                        <div class="dice-result" id="diceResult"></div>
                     </div>
-                </aside>
+
+                    <div class="quick-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Ход:</span>
+                            <span class="stat-value" id="currentTurn">1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Игроков:</span>
+                            <span class="stat-value" id="playersCount">4</span>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
 
@@ -108,12 +146,12 @@
         <div id="taskScreen" class="screen">
             <div class="task-container">
                 <div class="task-header">
-                    <div class="planet-header">
-                        <div class="planet-icon" id="taskPlanetIcon">🪐</div>
-                        <div class="planet-info">
-                            <h2 id="taskPlanetName">Синяя Планета</h2>
-                            <span class="planet-type" id="taskPlanetType">Космические задачи</span>
+                    <div class="task-info">
+                        <div class="difficulty-badge" id="taskDifficultyBadge">
+                            <span class="difficulty-text" id="taskDifficulty">Лёгкое</span>
+                            <span class="reward" id="taskReward">+10 🪙</span>
                         </div>
+                        <h2 id="taskCategory">Задание</h2>
                     </div>
                     <button class="close-button" id="closeTaskBtn">
                         <span>×</span>
@@ -121,11 +159,16 @@
                 </div>
 
                 <div class="task-content">
-                    <div class="animated-planet">
-                        <div class="planet-3d" id="taskPlanet3D">
-                            <div class="planet-surface"></div>
-                            <div class="planet-rings"></div>
-                            <div class="planet-glow"></div>
+                    <div class="task-visual">
+                        <div class="task-icon" id="taskIcon">🎯</div>
+                        <div class="task-timer" id="taskTimer">
+                            <div class="timer-circle">
+                                <svg class="timer-svg" viewBox="0 0 100 100">
+                                    <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                                    <circle class="timer-progress" cx="50" cy="50" r="45"></circle>
+                                </svg>
+                                <div class="timer-text" id="timerText">1:00</div>
+                            </div>
                         </div>
                     </div>
 
@@ -134,97 +177,70 @@
                         <p id="taskDescription" class="task-text">
                             Загрузка задания...
                         </p>
-                    </div>
-
-                    <div class="task-timer">
-                        <div class="timer">
-                            <div class="timer-circle">
-                                <svg class="timer-svg" viewBox="0 0 100 100">
-                                    <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
-                                    <circle class="timer-progress" cx="50" cy="50" r="45"></circle>
-                                </svg>
-                                <div class="timer-text" id="timerText">2:00</div>
-                            </div>
+                        <div class="task-hint" id="taskHint">
+                            💡 Подсказка: Используй свою профессию творчески!
                         </div>
                     </div>
 
                     <div class="task-actions">
-                        <button class="action-button primary" id="completeTaskBtn">
+                        <button class="action-button success" id="completeTaskBtn">
                             <span class="button-icon">✅</span>
                             Задание выполнено!
                         </button>
-                        <button class="action-button secondary" id="helpOtherBtn">
-                            <span class="button-icon">🤝</span>
-                            Помочь другому игроку
+                        <button class="action-button skip" id="skipTaskBtn">
+                            <span class="button-icon">⏭️</span>
+                            Пропустить задание (-5 🪙)
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Экран доказательства -->
-        <div id="proofScreen" class="screen">
-            <div class="proof-container">
-                <div class="proof-header">
-                    <h2>Доказательство полезности</h2>
-                    <div class="proof-progress">
-                        Убеждено: <span id="convincedCount">0</span>/3 инопланетян
+        <!-- Магазин -->
+        <div id="shopScreen" class="screen">
+            <div class="shop-container">
+                <div class="shop-header">
+                    <h1>🏪 Космический Магазин</h1>
+                    <div class="player-coins-shop">
+                        🪙 <span id="shopPlayerCoins">50</span> монет
                     </div>
+                    <button class="close-button" id="closeShopBtn">
+                        <span>×</span>
+                    </button>
                 </div>
 
-                <div class="proof-content">
-                    <div class="aliens-scene">
-                        <div class="alien alien-1" data-alien="1">
-                            <div class="alien-body">
-                                <div class="alien-eyes">
-                                    <div class="eye"></div>
-                                    <div class="eye"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="alien alien-2" data-alien="2">
-                            <div class="alien-body">
-                                <div class="alien-eyes">
-                                    <div class="eye"></div>
-                                    <div class="eye"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="alien alien-3" data-alien="3">
-                            <div class="alien-body">
-                                <div class="alien-eyes">
-                                    <div class="eye"></div>
-                                    <div class="eye"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="shop-categories">
+                    <button class="category-btn active" data-category="all">Все товары</button>
+                    <button class="category-btn" data-category="boosters">Усиления</button>
+                    <button class="category-btn" data-category="powers">Суперспособности</button>
+                    <button class="category-btn" data-category="cosmetics">Внешность</button>
+                </div>
 
-                    <div class="proof-statement">
-                        <div class="speech-bubble">
-                            <p id="proofStatement">Моя профессия полезна потому что...</p>
-                        </div>
-                    </div>
+                <div class="shop-items" id="shopItems">
+                    <!-- Товары магазина -->
+                </div>
 
-                    <div class="proof-input">
-                        <textarea id="proofText" placeholder="Расскажи, почему твоя профессия важна для космических путешественников..."></textarea>
-                        <div class="input-hint">Минимум 20 символов для убеждения</div>
+                <div class="inventory-section">
+                    <h3>🎒 Мой инвентарь</h3>
+                    <div class="inventory-items" id="inventoryItems">
+                        <!-- Купленные предметы -->
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <div class="convince-buttons">
-                        <button class="convince-button" data-alien="1">
-                            <span class="alien-emoji">👽</span>
-                            Убедить 1-го
-                        </button>
-                        <button class="convince-button" data-alien="2">
-                            <span class="alien-emoji">👽</span>
-                            Убедить 2-го
-                        </button>
-                        <button class="convince-button" data-alien="3">
-                            <span class="alien-emoji">👽</span>
-                            Убедить 3-го
-                        </button>
-                    </div>
+        <!-- Экран игроков -->
+        <div id="playersScreen" class="screen">
+            <div class="players-container">
+                <div class="players-header">
+                    <h1>👥 Игроки</h1>
+                    <button class="close-button" id="closePlayersBtn">
+                        <span>×</span>
+                    </button>
+                </div>
+
+                <div class="players-ranking" id="playersRanking">
+                    <!-- Рейтинг игроков -->
                 </div>
             </div>
         </div>
@@ -233,10 +249,9 @@
         <div id="winScreen" class="screen">
             <div class="victory-container">
                 <div class="victory-animation">
-                    <div class="trophy-planet">
-                        <div class="planet-core"></div>
-                        <div class="planet-crust"></div>
-                        <div class="planet-rings"></div>
+                    <div class="trophy">
+                        <div class="trophy-cup">🏆</div>
+                        <div class="trophy-base"></div>
                         <div class="sparkles">
                             <div class="sparkle"></div>
                             <div class="sparkle"></div>
@@ -248,34 +263,43 @@
                 </div>
 
                 <div class="victory-content">
-                    <h1 class="victory-title">Миссия выполнена! 🎉</h1>
-                    <p class="victory-subtitle">Ты достиг Планеты Профессий!</p>
+                    <h1 class="victory-title">Победа! 🎉</h1>
+                    <p class="victory-subtitle" id="winnerText">Игрок 1 достиг цели!</p>
 
                     <div class="victory-stats">
                         <div class="stat-card">
-                            <div class="stat-icon">⭐</div>
+                            <div class="stat-icon">🪙</div>
                             <div class="stat-info">
-                                <div class="stat-value" id="finalStars">10</div>
-                                <div class="stat-label">звезд собрано</div>
+                                <div class="stat-value" id="winnerCoins">300</div>
+                                <div class="stat-label">монет собрано</div>
                             </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon">🏆</div>
+                            <div class="stat-icon">⏱️</div>
                             <div class="stat-info">
-                                <div class="stat-value" id="winProfession">Профессия</div>
-                                <div class="stat-label">космическая профессия</div>
+                                <div class="stat-value" id="gameTurns">15</div>
+                                <div class="stat-label">ходов сыграно</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="victory-message">
-                        <p>Теперь вся галактика знает о важности твоей профессии!</p>
+                    <div class="final-ranking">
+                        <h3>🏁 Итоговый зачёт</h3>
+                        <div class="ranking-list" id="finalRanking">
+                            <!-- Финальный рейтинг -->
+                        </div>
                     </div>
 
-                    <button class="victory-button" id="restartGameBtn">
-                        <span class="button-icon">🔄</span>
-                        Начать новую миссию
-                    </button>
+                    <div class="victory-actions">
+                        <button class="victory-button" id="newGameBtn">
+                            <span class="button-icon">🔄</span>
+                            Новая игра
+                        </button>
+                        <button class="victory-button secondary" id="continueGameBtn">
+                            <span class="button-icon">🎮</span>
+                            Продолжить
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
